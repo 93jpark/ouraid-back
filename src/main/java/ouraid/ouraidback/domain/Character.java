@@ -1,4 +1,4 @@
-package ouraid.ouraidback.entity;
+package ouraid.ouraidback.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
