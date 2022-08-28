@@ -10,8 +10,7 @@ import ouraid.ouraidback.domain.enums.SubClass;
 
 import javax.persistence.*;
 
-@Entity
-@Getter
+@Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Character {
 
@@ -95,26 +94,25 @@ public class Character {
     // 캐릭터 길드 가입
     public void joinNewGuild(Guild guild) {
         this.joinedGuild = guild;
-        //guild.joinGuildWithCharacter(this);
+        guild.addGuildCharacter(this);
     }
 
     // 캐릭터 커뮤니티 가입
     public void joinNewCommunity(Community community) {
         this.joinedCommunity = community;
+        community.addJoinedCharacter(this);
     }
 
     // 가입된 길드 탈퇴
     public void leaveJoinedGuild() {
+        this.joinedGuild.leaveGuildByCharacter(this);
         this.joinedGuild = null;
     }
 
     // 가입된 커뮤니티 탈퇴
     public void leaveJoinedCommunity() {
+        this.joinedCommunity.removeJoinedCharacter(this);
         this.joinedCommunity = null;
     }
-
-
-
-
 
 }
