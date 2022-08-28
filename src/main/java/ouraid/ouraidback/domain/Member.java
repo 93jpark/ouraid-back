@@ -6,63 +6,139 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
+import ouraid.ouraidback.domain.enums.Server;
 
 import javax.persistence.*;
 import java.util.*;
 
-@Entity
+@Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Getter
 public class Member {
 
-    public Member(String nickname, String email, String password, Server server) {
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-        this.server = server;
+    @Id @GeneratedValue @Column(name="member_id") private Long id;
+
+    @NotNull @Column(unique = true) private String nickname;
+
+    @NotNull @Column(unique = true) private String email;
+
+    @NotNull private String password;
+
+    @NotNull private Boolean availability = true;
+
+    @Enumerated(EnumType.STRING) @NotNull private Server server;
+
+    @OneToOne(mappedBy = "communityMaster") @Nullable private Community ownCommunity;
+
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
+
+    @OneToMany(mappedBy = "guildMaster") @Nullable private List<Guild> ownGuilds = new ArrayList<>();
+
+    @OneToMany(mappedBy="guild") @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
+
+    @OneToMany(mappedBy = "characterOwner") private List<Character> ownCharacters = new ArrayList<>();
+
+
+    // 생성 메소드
+
+    /**
+     * 기본정보 바탕 Member 생성
+     * @param nickname
+     * @param email
+     * @param password
+     * @param server
+     * @return
+     */
+    public static Member create(String nickname, String email, String password, Server server) {
+        Member member = new Member();
+
+        member.nickname = nickname;
+        member.email = email;
+        member.password = password;
+        member.server = server;
+
+        return member;
     }
 
-    @Id @GeneratedValue
-    @Column(name="member_id")
-    private Long id;
+    public Member create(String nickname, String email, String password, Server server, Object dummy) {
+        Member member = new Member();
 
-    @NotNull
-    @Column(unique = true)
-    private String nickname;
+        member.nickname = nickname;
+        member.email = email;
+        member.password = password;
+        member.server = server;
 
-    @NotNull
-    @Column(unique = true)
-    private String email;
+        return member;
+    }
 
-    @NotNull
-    private String password;
+    // 비즈니스 로직
 
-    @NotNull
-    private Boolean availability = true;
+    /**
+     * 소유 캐릭터 추가
+     */
+    public void addOwnCharacter(Character character) {
+        this.ownCharacters.add(character);
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private Server server;
+    }
 
-    @OneToOne(mappedBy = "CommunityMaster")
-    @Nullable
-    private Community ownCommunity;
+    public void addOwnCharacters(List<Character> characters) {
+        for(Character c : characters) {
+            this.ownCharacters.add(c);
+        }
+    }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id")
-    private Community joinedCommunity;
+    /**
+     * 소유 캐릭터 삭제
+     */
+    public void removeOwnCharacter(Character character) {
+        this.ownCharacters.remove(character);
+    }
 
-    @OneToMany(mappedBy = "guildMaster")
-    @Nullable
-    private List<Guild> ownGuilds = new ArrayList<>();
+    /**
+     * 소유길드 추가
+     */
+    public void addOwnGuild(Guild guild) {
+        this.ownGuilds.add(guild);
+    }
 
-    @OneToMany(mappedBy="guild")
-    private List<GuildMember> joinedGuilds = new ArrayList<>();
+    /**
+     * 소유길드 삭제
+     */
+    public void removeOwnGuild(Guild guild) {
+        this.ownGuilds.remove(guild);
+    }
 
-    @OneToMany(mappedBy = "characterOwner")
-    private List<Character> ownCharacters = new ArrayList<>();
+    /**
+     * 회원상태 변경
+     */
+    public void changeMemberStatus() {
+        this.availability = !this.availability;
+    }
 
+    // 멤버 길드 탈퇴
+
+
+    // 커뮤니티 마스터 멤버 설정
+    public void setCommunityMaster(Community community) {
+        this.ownCommunity = community;
+        community.changeMaster(this);
+    }
+
+    // 커뮤니티 마스터 멤버 해제
+    public void unsetCommunityMaster() {
+        this.ownCommunity = null;
+    }
+
+
+    // 연관관계 편입 메소드
+    public void addJoinedGuild(GuildMember guildMember) {
+        joinedGuilds.add(guildMember);
+        guildMember.setMember(this);
+    }
+
+    public void leaveJoinedGuild(GuildMember guildMember) {
+        this.joinedGuilds.remove(guildMember);
+    }
 
 
 }
