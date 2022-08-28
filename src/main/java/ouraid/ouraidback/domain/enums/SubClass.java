@@ -1,4 +1,4 @@
-package ouraid.ouraidback.domain;
+package ouraid.ouraidback.domain.enums;
 
 public enum SubClass {
     // 여귀검

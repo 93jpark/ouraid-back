@@ -10,8 +10,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Getter
+@Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Community {
     @Id @GeneratedValue @Column(name="community_id") private Long id;
@@ -33,8 +32,6 @@ public class Community {
 
     @OneToMany(mappedBy = "joinedCommunity")
     private List<Guild> joinedGuilds = new ArrayList<>();
-
-
 
     /**
      * basic Community creation

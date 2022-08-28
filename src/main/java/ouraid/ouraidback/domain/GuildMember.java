@@ -3,11 +3,12 @@ package ouraid.ouraidback.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GuildMember {
     @Id @GeneratedValue
@@ -21,4 +22,11 @@ public class GuildMember {
     @ManyToOne
     @JoinColumn(name = "guild_id")
     private Guild guild;
+
+    // 생성 메소드
+    public static GuildMember createGuildMember() {
+        GuildMember guildMember = new GuildMember();
+
+        return guildMember;
+    }
 }

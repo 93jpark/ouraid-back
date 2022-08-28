@@ -1,4 +1,4 @@
-package ouraid.ouraidback.domain;
+package ouraid.ouraidback.domain.enums;
 
 public enum MainClass {
     MALE_GHOST_KNIGHT,

@@ -1,4 +1,4 @@
-package ouraid.ouraidback.domain;
+package ouraid.ouraidback.domain.enums;
 
 public enum Server {
     SHUSIA, SHYLOCK, CANNA, OPHELIA, IRIS, ZELDIN, MINTAI, PARRIS
