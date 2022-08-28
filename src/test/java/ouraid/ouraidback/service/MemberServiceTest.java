@@ -1,10 +1,9 @@
-package ouraid.ouraidback.Member;
+package ouraid.ouraidback.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.Repository.MemberRepository;
@@ -32,11 +31,11 @@ public class CreateMember {
     public void createMember() throws Exception {
 
         //given
-        Member newMember = new Member("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
         Long savedMemberId = memberService.registerMember(newMember);
 
         //when
-        Member findMember = memberRepository.findByNickname("유니츠").get(0);
+        Member findMember = memberRepository.findByNickname("유니츠");
 
         //then
         assertEquals(savedMemberId, findMember.getId());
@@ -46,11 +45,11 @@ public class CreateMember {
     //Rollback(false)
     public void validateDuplicatedMember() throws Exception {
         //given
-        Member newMember = new Member("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
         Long savedMemberId = memberService.registerMember(newMember);
 
         //when
-        Member findMember = memberRepository.findByNickname("유니츠").get(0);
+        Member findMember = memberRepository.findByNickname("유니츠");
 
         //then
         fail("Member/CreateMember/ 'validation for duplicated member failed'");

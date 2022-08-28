@@ -4,7 +4,7 @@ import com.sun.istack.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
+import ouraid.ouraidback.domain.enums.Server;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,16 +14,11 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Community {
-    @Id @GeneratedValue
-    @Column(name="community_id")
-    private Long id;
+    @Id @GeneratedValue @Column(name="community_id") private Long id;
 
-    @NotNull
-    private String name;
+    @NotNull private String name;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private Server server;
+    @Enumerated(EnumType.STRING) @NotNull private Server server;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "community_id")
@@ -31,13 +26,14 @@ public class Community {
     private Member communityMaster;
 
     @OneToMany(mappedBy = "joinedCommunity")
+    private List<Character> joinedCharacters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "joinedCommunity")
     private List<Member> joinedMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "joinedCommunity")
     private List<Guild> joinedGuilds = new ArrayList<>();
 
-    @OneToMany(mappedBy = "joinedCommunity")
-    private List<Character> joinedCharacters = new ArrayList<>();
 
 
     /**
@@ -57,11 +53,50 @@ public class Community {
     }
 
     // 비즈니스 로직
-    /**
-     * 커뮤니티 마스터 변경
-     */
-    public void changeMaster() {
 
+    // 커뮤니티 마스터 변경
+    public void changeMaster(Member member) {
+        this.communityMaster = member;
     }
+
+    // 커뮤니티 이름 변경
+    public void changeName(String newName) {
+        this.name = newName;
+    }
+
+    // 소속 캐릭터 추가
+    public void addJoinedCharacter(Character newCharacter) {
+        this.joinedCharacters.add(newCharacter);
+    }
+
+    // 소속 캐릭터 삭제
+    public void removeJoinedCharacter(Character character) {
+        this.joinedCharacters.remove(character);
+    }
+
+    // 소속 멤버 추가
+    public void addJoinedMember(Member member) {
+        this.joinedMembers.add(member);
+    }
+
+    // 소속 멤버 삭제
+    public void removeJoinedMember(Member member) {
+        this.joinedMembers.remove(member);
+    }
+
+    // 소속 길드 추가
+    public void addJoinedGuild(Guild guild) {
+        this.joinedGuilds.add(guild);
+        guild.joinNewCommunity(this);
+    }
+
+    // 소속 길드 삭제
+    public void removeJoinedGuild(Guild guild) {
+        this.joinedGuilds.remove(guild);
+        guild.leaveJoinedCommunity();
+    }
+
+
+    //
 
 }
