@@ -10,6 +10,8 @@ import ouraid.ouraidback.domain.enums.SubClass;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Character {
@@ -26,11 +28,11 @@ public class Character {
 
     @NotNull private Double ability;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "member_id") private Member characterOwner;
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") private Member characterOwner;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "guild_id") private Guild joinedGuild;
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "guild_id") private Guild joinedGuild;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
 
     /**
      * create character without any joined guild or community

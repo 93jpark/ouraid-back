@@ -9,17 +9,20 @@ import ouraid.ouraidback.domain.enums.Server;
 import javax.persistence.*;
 import java.util.*;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @DiscriminatorColumn(name = "ptype")
-public abstract class Party {
+//@MappedSuperclass
+public class Party {
     @Id @GeneratedValue @Column(name="party_id") private Long id;
 
     @Enumerated(EnumType.STRING) @NotNull
     protected Server server;
 
-    @ManyToOne @JoinColumn(name = "member_id") @NotNull
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") @NotNull
     protected Member creatorMember;
 
     @NotNull private int partyCapacity;
