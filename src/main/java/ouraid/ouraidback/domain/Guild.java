@@ -10,6 +10,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Guild {
@@ -21,9 +23,9 @@ public class Guild {
 
     @Enumerated(EnumType.STRING) @NotNull private Server server;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "member_id") @NotNull private Member guildMaster;
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") @NotNull private Member guildMaster;
 
     @OneToMany(mappedBy="member") private List<GuildMember> guildMembers = new ArrayList<>();
 
