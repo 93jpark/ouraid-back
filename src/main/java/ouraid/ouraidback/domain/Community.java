@@ -10,6 +10,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Community {
@@ -19,7 +21,7 @@ public class Community {
 
     @Enumerated(EnumType.STRING) @NotNull private Server server;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "community_id")
     @NotNull
     private Member communityMaster;
