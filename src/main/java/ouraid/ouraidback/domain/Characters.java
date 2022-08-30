@@ -10,6 +10,8 @@ import ouraid.ouraidback.domain.enums.SubClass;
 
 import javax.persistence.*;
 
+import java.math.BigDecimal;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity @Getter
@@ -26,7 +28,7 @@ public class Characters {
 
     @Enumerated(EnumType.STRING) @NotNull private SubClass subClass;
 
-    @NotNull private Double ability;
+    @NotNull private BigDecimal ability;
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") private Member characterOwner;
 
@@ -50,7 +52,7 @@ public class Characters {
         character.name = name;
         character.mainClass = mainClass;
         character.subClass = subClass;
-        character.ability = ability;
+        character.ability = BigDecimal.valueOf(ability);
         character.characterOwner = characterOwner;
 
         return character;
@@ -75,7 +77,7 @@ public class Characters {
         character.name = name;
         character.mainClass = mainClass;
         character.subClass = subClass;
-        character.ability = ability;
+        character.ability = BigDecimal.valueOf(ability);
         character.characterOwner = characterOwner;
         character.joinedGuild = joinedGuild;
         character.joinedCommunity = joinedCommunity;
@@ -89,8 +91,8 @@ public class Characters {
     }
 
     // 항마 변경
-    public void changeAbility(Double ab) {
-        this.ability = ab;
+    public void changeAbility(Double ability) {
+        this.ability = BigDecimal.valueOf(ability);
     }
 
     // 캐릭터 길드 가입
