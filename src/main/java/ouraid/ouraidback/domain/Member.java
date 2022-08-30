@@ -11,6 +11,8 @@ import ouraid.ouraidback.domain.enums.Server;
 import javax.persistence.*;
 import java.util.*;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -28,9 +30,9 @@ public class Member {
 
     @Enumerated(EnumType.STRING) @NotNull private Server server;
 
-    @OneToOne(mappedBy = "communityMaster") @Nullable private Community ownCommunity;
+    @OneToOne(mappedBy = "communityMaster", fetch = LAZY) @Nullable private Community ownCommunity;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
+    @ManyToOne(fetch = LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
 
     @OneToMany(mappedBy = "guildMaster") @Nullable private List<Guild> ownGuilds = new ArrayList<>();
 
