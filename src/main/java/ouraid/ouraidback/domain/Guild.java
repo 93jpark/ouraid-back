@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity @Getter
@@ -27,9 +28,9 @@ public class Guild {
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") @NotNull private Member guildMaster;
 
-    @OneToMany(mappedBy="member") private List<GuildMember> guildMembers = new ArrayList<>();
+    @OneToMany(mappedBy="member", cascade = PERSIST) private List<GuildMember> guildMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "joinedGuild") private List<Characters> guildCharacters = new ArrayList<>();
+    @OneToMany(mappedBy = "joinedGuild", cascade = PERSIST) private List<Characters> guildCharacters = new ArrayList<>();
 
     // 생성 메소드
     public Guild create(Server server, String name, int level, Member master, Community joinedCommunity) {
@@ -47,7 +48,7 @@ public class Guild {
     // 길드 멤버 가입
     public void addGuildMember(GuildMember guildMember) {
         guildMembers.add(guildMember);
-        guildMember.setGuild(this);
+        //guildMember.setGuild(this);
     }
 
     // 길드 캐릭터 가입

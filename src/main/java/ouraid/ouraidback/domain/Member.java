@@ -40,7 +40,7 @@ public class Member {
     @OneToMany(mappedBy="guild", cascade = PERSIST) @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
 
     // 소유캐릭 삭제 시 캐릭 엔티티 삭제
-    @OneToMany(mappedBy = "characterOwner", cascade = ALL, orphanRemoval = true) private List<Character> ownCharacters = new ArrayList<>();
+    @OneToMany(mappedBy = "characterOwner", cascade = ALL, orphanRemoval = true) private List<Characters> ownCharacters = new ArrayList<>();
 
 
     // 생성 메소드
@@ -80,13 +80,13 @@ public class Member {
     /**
      * 소유 캐릭터 추가
      */
-    public void addOwnCharacter(Character character) {
+    public void addOwnCharacter(Characters character) {
         this.ownCharacters.add(character);
 
     }
 
-    public void addOwnCharacters(List<Character> characters) {
-        for(Character c : characters) {
+    public void addOwnCharacters(List<Characters> characters) {
+        for(Characters c : characters) {
             this.ownCharacters.add(c);
         }
     }
@@ -94,7 +94,7 @@ public class Member {
     /**
      * 소유 캐릭터 삭제
      */
-    public void removeOwnCharacter(Character character) {
+    public void removeOwnCharacter(Characters character) {
         this.ownCharacters.remove(character);
     }
 
@@ -137,7 +137,6 @@ public class Member {
     // 연관관계 편입 메소드
     public void addJoinedGuild(GuildMember guildMember) {
         joinedGuilds.add(guildMember);
-        guildMember.setMember(this);
     }
 
     public void leaveJoinedGuild(GuildMember guildMember) {

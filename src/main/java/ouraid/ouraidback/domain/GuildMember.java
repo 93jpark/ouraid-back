@@ -10,7 +10,7 @@ import javax.persistence.*;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GuildMember {
     @Id @GeneratedValue
@@ -26,9 +26,10 @@ public class GuildMember {
     private Guild guild;
 
     // 생성 메소드
-    public static GuildMember createGuildMember() {
+    public static GuildMember createGuildMember(Guild guild, Member member) {
         GuildMember guildMember = new GuildMember();
-
+        guildMember.guild = guild;
+        guildMember.member = member;
         return guildMember;
     }
 }

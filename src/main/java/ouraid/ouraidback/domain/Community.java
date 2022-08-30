@@ -31,10 +31,10 @@ public class Community {
     @OneToMany(mappedBy = "joinedCommunity", cascade = PERSIST)
     private List<Characters> joinedCharacters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "joinedCommunity")
+    @OneToMany(mappedBy = "joinedCommunity", cascade = PERSIST)
     private List<Member> joinedMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "joinedCommunity")
+    @OneToMany(mappedBy = "joinedCommunity", cascade = PERSIST)
     private List<Guild> joinedGuilds = new ArrayList<>();
 
     /**
