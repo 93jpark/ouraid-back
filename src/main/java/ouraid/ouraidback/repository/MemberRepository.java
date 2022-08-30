@@ -1,4 +1,4 @@
-package ouraid.ouraidback.Repository;
+package ouraid.ouraidback.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,8 +16,9 @@ public class MemberRepository {
     // 생성자 인젝션을 한 경우. 생성자는 생략되며 Spring에서 제공해준다.
     // 또한, PersistenceContext는 JPA의 기능인데, 스프링에서 처리해준다.
 
-    public void register(Member member) {
+    public Long register(Member member) {
         em.persist(member);
+        return member.getId();
     }
 
     public Member findOne(Long id) {
@@ -29,15 +30,28 @@ public class MemberRepository {
                 .getResultList();
     }
 
-    public List<Member> findByNickname(String nickname) {
+    public Member findByNickname(String nickname) {
         return em.createQuery("select m from Member m where m.nickname = :nickname", Member.class)
                 .setParameter("nickname", nickname)
-                .getResultList();
+                .getSingleResult();
     }
 
     public List<Member> findByServer(String serverName) {
         return em.createQuery("select m from Member m where m.server = :serverName", Member.class)
                 .setParameter("serverName", serverName)
+                .getResultList();
+    }
+
+    public List<Member> findByCommunity(String cName) {
+        return em.createQuery("select m from Member m where m.joinedCommunity = :cName", Member.class)
+                .setParameter("cName", cName)
+                .getResultList();
+    }
+
+    public List<Member> findByGuild(String gName) {
+        return em.createQuery("select m from Member m join m.joinedGuilds g " +
+                        "where g.guild.name = :gName", Member.class)
+                .setParameter("gName", gName)
                 .getResultList();
     }
 }

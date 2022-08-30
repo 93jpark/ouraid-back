@@ -11,6 +11,7 @@ import ouraid.ouraidback.domain.enums.Server;
 import javax.persistence.*;
 import java.util.*;
 
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity @Getter
@@ -30,15 +31,16 @@ public class Member {
 
     @Enumerated(EnumType.STRING) @NotNull private Server server;
 
-    @OneToOne(mappedBy = "communityMaster", fetch = LAZY) @Nullable private Community ownCommunity;
+    @OneToOne(mappedBy = "communityMaster", fetch = LAZY, cascade = PERSIST) @Nullable private Community ownCommunity;
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "community_id") private Community joinedCommunity;
 
-    @OneToMany(mappedBy = "guildMaster") @Nullable private List<Guild> ownGuilds = new ArrayList<>();
+    @OneToMany(mappedBy = "guildMaster", cascade = PERSIST) @Nullable private List<Guild> ownGuilds = new ArrayList<>();
 
-    @OneToMany(mappedBy="guild") @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
+    @OneToMany(mappedBy="guild", cascade = PERSIST) @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
 
-    @OneToMany(mappedBy = "characterOwner") private List<Character> ownCharacters = new ArrayList<>();
+    // 소유캐릭 삭제 시 캐릭 엔티티 삭제
+    @OneToMany(mappedBy = "characterOwner", cascade = ALL, orphanRemoval = true) private List<Character> ownCharacters = new ArrayList<>();
 
 
     // 생성 메소드

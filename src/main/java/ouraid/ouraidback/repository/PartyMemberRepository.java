@@ -1,4 +1,4 @@
-package ouraid.ouraidback.Repository;
+package ouraid.ouraidback.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

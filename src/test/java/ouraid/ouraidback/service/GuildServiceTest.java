@@ -1,2 +1,4 @@
-package ouraid.ouraidback.service;public class GuildServiceTest {
+package ouraid.ouraidback.service;
+
+public class GuildServiceTest {
 }

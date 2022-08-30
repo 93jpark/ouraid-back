@@ -14,7 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Character {
+public class Characters {
 
     @Id @GeneratedValue @Column(name="character_id") private Long id;
 
@@ -44,8 +44,8 @@ public class Character {
      * @param characterOwner
      * @return
      */
-    public static Character create(Server server, String name, MainClass mainClass, SubClass subClass, Double ability, Member characterOwner) {
-        Character character = new Character();
+    public static Characters create(Server server, String name, MainClass mainClass, SubClass subClass, Double ability, Member characterOwner) {
+        Characters character = new Characters();
         character.server = server;
         character.name = name;
         character.mainClass = mainClass;
@@ -68,8 +68,8 @@ public class Character {
      * @param joinedCommunity
      * @return
      */
-    public static Character create(Server server, String name, MainClass mainClass, SubClass subClass, Double ability, Member characterOwner, Guild joinedGuild, Community joinedCommunity) {
-        Character character = new Character();
+    public static Characters create(Server server, String name, MainClass mainClass, SubClass subClass, Double ability, Member characterOwner, Guild joinedGuild, Community joinedCommunity) {
+        Characters character = new Characters();
 
         character.server = server;
         character.name = name;

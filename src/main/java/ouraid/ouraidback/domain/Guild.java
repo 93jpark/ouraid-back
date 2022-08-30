@@ -29,7 +29,7 @@ public class Guild {
 
     @OneToMany(mappedBy="member") private List<GuildMember> guildMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "joinedGuild") private List<Character> guildCharacters = new ArrayList<>();
+    @OneToMany(mappedBy = "joinedGuild") private List<Characters> guildCharacters = new ArrayList<>();
 
     // 생성 메소드
     public Guild create(Server server, String name, int level, Member master, Community joinedCommunity) {
@@ -51,13 +51,13 @@ public class Guild {
     }
 
     // 길드 캐릭터 가입
-    public void addGuildCharacter(Character character) {
+    public void addGuildCharacter(Characters character) {
         this.guildCharacters.add(character);
     }
 
 
     // 길드 캐릭터 탈퇴
-    public void leaveGuildByCharacter(Character character) {
+    public void leaveGuildByCharacter(Characters character) {
         this.guildCharacters.remove(character);
     }
 

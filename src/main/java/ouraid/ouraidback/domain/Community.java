@@ -10,6 +10,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity @Getter
@@ -21,13 +23,13 @@ public class Community {
 
     @Enumerated(EnumType.STRING) @NotNull private Server server;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = LAZY, cascade = PERSIST)
     @JoinColumn(name = "community_id")
     @NotNull
     private Member communityMaster;
 
-    @OneToMany(mappedBy = "joinedCommunity")
-    private List<Character> joinedCharacters = new ArrayList<>();
+    @OneToMany(mappedBy = "joinedCommunity", cascade = PERSIST)
+    private List<Characters> joinedCharacters = new ArrayList<>();
 
     @OneToMany(mappedBy = "joinedCommunity")
     private List<Member> joinedMembers = new ArrayList<>();
@@ -64,12 +66,12 @@ public class Community {
     }
 
     // 소속 캐릭터 추가
-    public void addJoinedCharacter(Character newCharacter) {
+    public void addJoinedCharacter(Characters newCharacter) {
         this.joinedCharacters.add(newCharacter);
     }
 
     // 소속 캐릭터 삭제
-    public void removeJoinedCharacter(Character character) {
+    public void removeJoinedCharacter(Characters character) {
         this.joinedCharacters.remove(character);
     }
 
