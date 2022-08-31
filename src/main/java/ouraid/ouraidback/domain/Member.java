@@ -77,6 +77,11 @@ public class Member {
 
     // 비즈니스 로직
 
+    // 멤버 닉네임 변경
+    public void updateMemberNickname(String newNickname){
+        this.nickname = newNickname;
+    }
+
     /**
      * 소유 캐릭터 추가
      */
