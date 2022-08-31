@@ -30,10 +30,10 @@ public class CharacterRepository {
     }
 
     // 캐릭명으로 단일 캐릭터 조회
-    public Characters findByCharName(String name) {
+    public List<Characters> findByCharName(String name) {
         return em.createQuery("select c from Characters c where c.name = :name", Characters.class)
                 .setParameter("name", name)
-                .getSingleResult();
+                .getResultList();
     }
 
     // 서버이름 기반 캐릭터 조회
