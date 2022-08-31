@@ -25,14 +25,10 @@ public class CharacterService {
 
     // 캐릭터 생성
     @Transactional
-    public Long createCharacter(Characters character) {
-        if(validateDuplicateCharacter(character)) {
-            characterRepository.register(character);
-            return character.getId();
-        } else {
-            log.info("CharacterService.createCharacter() : 캐릭생성 불가");
-            return null;
-        }
+    public Long registerCharacter(Characters character) {
+        validateDuplicateCharacter(character);
+        characterRepository.register(character);
+        return character.getId();
     }
 
     // 캐릭터 삭제
@@ -45,17 +41,16 @@ public class CharacterService {
             findChar.changeName(newName);
             em.flush();
             em.clear();
-
         } catch (Exception e) {
             log.warn("CharacterService.updateCharacterName() : 이름 변경 실패 - {}", e.getMessage());
         }
     }
 
     @Transactional
-    public void updateCharacterAbility(Long charId, Double ab) {
+    public void updateCharacterAbility(Long charId, Double ability) {
         try {
             Characters findChar = characterRepository.findOne(charId);
-            findChar.changeAbility(ab);
+            findChar.changeAbility(ability);
             em.flush();
             em.clear();
         } catch (Exception e) {
@@ -84,19 +79,23 @@ public class CharacterService {
 
 
 
+//    private void validateDuplicatedMember(Member member) {
+//        // EXCEPTION
+//        List<Member> findMembers =  memberRepository.findByName(member.getName());
+//        if(!findMembers.isEmpty()) {
+//            throw new IllegalStateException("이미 존재하는 회원입니다.");
+//        }
+//    }
+
     /* 캐릭명 중복 검사 */
     @Transactional(readOnly = true)
-    public Boolean validateDuplicateCharacter(Characters character) {
-        try {
-            Characters findChar = characterRepository.findByCharName(character.getName());
-            if(findChar != null) {
-                throw new IllegalStateException("MemberService.validateDuplicateMember() : 이미 존재하는 캐릭터 명");
-            }
-        } catch (EmptyResultDataAccessException e) {
-            log.info("CharacterService.validateDuplicateCharacter() : 사용가능한 캐릭터 정보");
-            return true;
-        } finally {
-            return false;
+    public void validateDuplicateCharacter(Characters character) {
+        List<Characters> findChar = characterRepository.findByCharName(character.getName());
+        log.info("{} get ListCharacters from repository", findChar.size());
+
+        if (!findChar.isEmpty()) {
+            throw new IllegalStateException("MemberService.validateDuplicateMember() : 이미 존재하는 캐릭터 명");
         }
+        log.info("{} can be registered", character.getName());
     }
 }
