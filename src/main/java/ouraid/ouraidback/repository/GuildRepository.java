@@ -28,10 +28,10 @@ public class GuildRepository {
     }
 
     // 길드명에 따른 길드 조회
-    public Guild findByGuildName(String gName) {
+    public List<Guild> findByGuildName(String gName) {
         return em.createQuery("select g from Guild g where g.name = :gName", Guild.class)
                 .setParameter("gName", gName)
-                .getSingleResult();
+                .getResultList();
     }
 
     // 서버명에 따른 길드 조회
