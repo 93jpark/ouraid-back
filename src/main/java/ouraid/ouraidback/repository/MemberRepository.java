@@ -30,10 +30,10 @@ public class MemberRepository {
                 .getResultList();
     }
 
-    public Member findByNickname(String nickname) {
+    public List<Member> findByNickname(String nickname) {
         return em.createQuery("select m from Member m where m.nickname = :nickname", Member.class)
                 .setParameter("nickname", nickname)
-                .getSingleResult();
+                .getResultList();
     }
 
     public List<Member> findByServer(String serverName) {
