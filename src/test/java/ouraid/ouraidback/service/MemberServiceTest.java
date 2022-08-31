@@ -31,7 +31,6 @@ public class MemberServiceTest {
     MemberRepository memberRepository;
 
     @Test
-    @Rollback(false)
     public void 단일_멤버_생성() throws Exception {
 
         //given

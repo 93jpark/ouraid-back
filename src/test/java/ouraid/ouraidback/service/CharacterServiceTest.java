@@ -46,7 +46,6 @@ public class CharacterServiceTest {
     EntityManager em;
 
     @Test
-    @Rollback(true)
     public void 캐릭터_기본정보_생성() {
         //given
         Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
@@ -66,7 +65,6 @@ public class CharacterServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    //@Rollback(false)
     public void 캐릭터_생성_중복이름감지() {
         //given
         Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
