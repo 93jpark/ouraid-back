@@ -33,7 +33,7 @@ public class Guild {
     @OneToMany(mappedBy = "joinedGuild", cascade = PERSIST) private List<Characters> guildCharacters = new ArrayList<>();
 
     // 생성 메소드
-    public Guild create(Server server, String name, int level, Member master, Community joinedCommunity) {
+    public static Guild create(Server server, String name, int level, Member master, Community joinedCommunity) {
         Guild guild = new Guild();
 
         guild.name = name;
@@ -72,6 +72,9 @@ public class Guild {
     public void changeGuildMaster(Member member) {
         this.guildMaster = member;
     }
+
+    // 길드 레벨 변경
+    public void updateGuildLevel(Integer level) { this.level = level; }
 
     // 커뮤니티 설정
     public void joinNewCommunity(Community community) {
