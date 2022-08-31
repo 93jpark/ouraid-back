@@ -9,6 +9,7 @@ import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Member;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,21 +21,25 @@ public class MemberService {
     // 회원가입
     @Transactional
     public Long registerMember(Member member) {
-        if(validateDuplicatedMember(member)) {
-            Long memberId = memberRepository.register(member);
-            log.info(member.getNickname()+" has been registered");
-            return memberId;
-        } else {
-            log.info(member.getNickname()+" cannot be registered");
-            return null;
-
-        }
+        validateDuplicatedMember(member);
+        Long memberId = memberRepository.register(member);
+        log.info(member.getNickname()+" has been registered");
+        return memberId;
     }
 
     // 회원탈퇴
 
 
     // 회원 정보 수정
+    @Transactional
+    public void updateMemberNickname(Long memberId, String newName) {
+        try {
+            Member member = memberRepository.findOne(memberId);
+            member.updateMemberNickname(newName);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
+    }
 
 
     // 회원 검색
@@ -45,7 +50,7 @@ public class MemberService {
     public Member findMemberById(Long memberId) { return memberRepository.findOne(memberId); }
 
     @Transactional(readOnly = true) // 닉네임 기반
-    public Member findMemberByName(String name) { return memberRepository.findByNickname(name); }
+    public List<Member> findMemberByName(String name) { return memberRepository.findByNickname(name); }
 
     @Transactional(readOnly = true) // 서버 기반
     public List<Member> findMembersByServer(String serverName) { return memberRepository.findByServer(serverName); }
@@ -57,16 +62,11 @@ public class MemberService {
     public List<Member> findMembersByGuild(String gName) { return memberRepository.findByGuild(gName); }
 
     // 중복회원 검증
-    public Boolean validateDuplicatedMember(Member member) {
-        try {
-            Member findMember =  memberRepository.findByNickname(member.getNickname());
-            if(findMember!=null) {
-                throw new IllegalStateException("MemberService.validateDuplicateMember() : 이미 존재하는 회원");
-            }
-        } catch (EmptyResultDataAccessException e) {
-            log.info("MemberService.validateDuplicateMember() : 사용가능한 회원정보");
-            return true;
+    public void validateDuplicatedMember(Member member) {
+        List<Member> findMember =  memberRepository.findByNickname(member.getNickname());
+        if(!findMember.isEmpty()){
+            throw new IllegalStateException("MemberService.validateDuplicateMember() : 이미 존재하는 회원");
         }
-        return false;
+        log.info("MemberService.validateDuplicateMember() : 사용가능한 회원정보");
     }
 }
