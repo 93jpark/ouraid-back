@@ -28,10 +28,10 @@ public class CommunityRepository {
     }
 
     // 커뮤니티 명에 따른 커뮤니티 조회
-    public Community findByComName(String cName) {
+    public List<Community> findByComName(String cName) {
         return em.createQuery("select c from Community c where c.name = :cName", Community.class)
                 .setParameter("cName", cName)
-                .getSingleResult();
+                .getResultList();
     }
 
     // 서버 명에 따른 커뮤니티 조회
