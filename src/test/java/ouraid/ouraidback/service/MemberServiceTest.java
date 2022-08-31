@@ -72,4 +72,20 @@ public class MemberServiceTest {
         //then
         assertEquals(newMember.getNickname(), "유우니이츠으");
     }
+
+    @Test
+    public void 멤버_비활성화() {
+        //given
+        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        Long memberId = memberService.registerMember(newMember);
+
+        //when
+        newMember.changeMemberStatus();
+        Member findMember = memberRepository.findOne(memberId);
+
+        //then
+        assertEquals(findMember.getAvailability(), false);
+    }
+
+
 }
