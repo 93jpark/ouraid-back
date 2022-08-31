@@ -1,6 +1,7 @@
 package ouraid.ouraidback.service;
 
-import org.junit.jupiter.api.Test;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,13 +12,16 @@ import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.Server;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
+@Transactional @Slf4j
 public class MemberServiceTest {
 
     @Autowired
@@ -28,30 +32,44 @@ public class MemberServiceTest {
 
     @Test
     @Rollback(false)
-    public void createMember() throws Exception {
+    public void 단일_멤버_생성() throws Exception {
 
         //given
         Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
         Long savedMemberId = memberService.registerMember(newMember);
 
         //when
-        Member findMember = memberRepository.findByNickname("유니츠");
+        Member findMember = memberRepository.findByNickname("유니츠").get(0);
 
         //then
         assertEquals(savedMemberId, findMember.getId());
     }
 
-    @Test
-    //Rollback(false)
-    public void validateDuplicatedMember() throws Exception {
+    @Test(expected = IllegalStateException.class)
+    public void 중복_회원_예외() {
         //given
         Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
-        Long savedMemberId = memberService.registerMember(newMember);
+        Member dupMember = Member.create("유니츠", "mock@gmail.com", "123", Server.SHUSIA);
 
         //when
-        Member findMember = memberRepository.findByNickname("유니츠");
+        memberService.registerMember(newMember);
+        memberService.registerMember(dupMember);
 
         //then
         fail("Member/CreateMember/ 'validation for duplicated member failed'");
+    }
+
+
+    @Test
+    public void 멤버_정보_수정() throws Exception {
+        //given
+        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        Long memberId = memberService.registerMember(newMember);
+
+        //when
+        memberService.updateMemberNickname(memberId, "유우니이츠으");
+        Member findMember = memberService.findMemberByName("유우니이츠으").get(0);
+        //then
+        assertEquals(newMember.getNickname(), "유우니이츠으");
     }
 }
