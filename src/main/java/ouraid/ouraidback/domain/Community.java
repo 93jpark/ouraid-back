@@ -44,7 +44,7 @@ public class Community {
      * @param master
      * @return
      */
-    public Community create(Server server, String name, Member master) {
+    public static Community create(Server server, String name, Member master) {
         Community community = new Community();
         community.server = server;
         community.name = name;
