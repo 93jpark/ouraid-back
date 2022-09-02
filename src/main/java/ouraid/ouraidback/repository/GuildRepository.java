@@ -34,6 +34,13 @@ public class GuildRepository {
                 .getResultList();
     }
 
+    // 소속 연합명에 따른 길드 조회
+    public List<Guild> findByJoinedCommunityName(String cName) {
+        return em.createQuery("select g from Guild g where g.joinedCommunity.name = :cName", Guild.class)
+                .setParameter("cName", cName)
+                .getResultList();
+    }
+
     // 서버명에 따른 길드 조회
     public List<Guild> findByServer(String sName) {
         return em.createQuery("select g from Guild g where g.server = :sName", Guild.class)
