@@ -48,9 +48,12 @@ public class GuildService {
         em.flush();
     }
 
-    // 길드원 추가
+    // 길드원 탈퇴
+    @Transactional
+    public void leaveGuildMember(Long guildId, Member member) {
 
-    // 길드원 삭제
+    }
+
 
         /* 길드 조회 */
 
