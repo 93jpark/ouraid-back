@@ -78,5 +78,14 @@ public class CharacterRepository {
                 .getResultList();
     }
 
+    // 특정 길드의 멤버가 지닌 캐릭터 조회
+    public List<Characters> findCharactersByMemberWithGuild(String guildName, String memberName) {
+        return em.createQuery("select c from Characters c " +
+                        "where c.characterOwner.nickname = :memberName " +
+                        "and c.joinedGuild.name = :guildName")
+                .setParameter("memberName", memberName)
+                .setParameter("guildName", guildName)
+                .getResultList();
+    }
 
 }
