@@ -52,8 +52,9 @@ public class GuildService {
 
     // 길드원 삭제
 
-    /* 길드 조회 */
+        /* 길드 조회 */
 
+    // 길드 ID로 길드 단건 조회
     @Transactional(readOnly = true)
     public Guild findById(Long id) { return guildRepository.findOne(id); }
 
@@ -63,6 +64,15 @@ public class GuildService {
         return guildRepository.findByGuildName(guildName);
     }
 
+    // 특정 커뮤니티 소속 길드 조회
+    @Transactional(readOnly = true)
+    public List<Guild> findGuildByJoinedCommunity(String comName) {
+        return guildRepository.findByJoinedCommunityName(comName);
+    }
+
+
+
+    // 길드 이름 중복 조회
     @Transactional(readOnly = true)
     public void validateDuplicateGuild(Guild guild) {
         List<Guild> findGuild = guildRepository.findByGuildName(guild.getName());
