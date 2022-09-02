@@ -3,6 +3,7 @@ package ouraid.ouraidback.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ouraid.ouraidback.domain.Guild;
+import ouraid.ouraidback.domain.Member;
 
 import javax.persistence.EntityManager;
 import java.util.List;
