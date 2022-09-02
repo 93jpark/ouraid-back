@@ -44,7 +44,6 @@ public class Member {
 
 
     // 생성 메소드
-
     /**
      * 기본정보 바탕 Member 생성
      * @param nickname
@@ -82,44 +81,34 @@ public class Member {
         this.nickname = newNickname;
     }
 
-    /**
-     * 소유 캐릭터 추가
-     */
+    //소유 캐릭터 추가
     public void addOwnCharacter(Characters character) {
         this.ownCharacters.add(character);
-
     }
 
-    public void addOwnCharacters(List<Characters> characters) {
+    public void addOwnCharacters(Characters... characters) {
         for(Characters c : characters) {
             this.ownCharacters.add(c);
         }
     }
 
-    /**
-     * 소유 캐릭터 삭제
-     */
+    //소유 캐릭터 삭제
     public void removeOwnCharacter(Characters character) {
         this.ownCharacters.remove(character);
     }
 
-    /**
-     * 소유길드 추가
-     */
+    //소유길드 추가
+
     public void addOwnGuild(Guild guild) {
         this.ownGuilds.add(guild);
     }
 
-    /**
-     * 소유길드 삭제
-     */
+    // 소유길드 삭제
     public void removeOwnGuild(Guild guild) {
         this.ownGuilds.remove(guild);
     }
 
-    /**
-     * 회원상태 변경
-     */
+    // 회원상태 변경
     public void changeMemberStatus() {
         this.availability = !this.availability;
     }
@@ -136,6 +125,17 @@ public class Member {
     // 커뮤니티 마스터 멤버 해제
     public void unsetCommunityMaster() {
         this.ownCommunity = null;
+    }
+
+    // 소속 커뮤니티 설정
+    public void setJoinedCommunity(Community community) {
+        this.joinedCommunity = community;
+        community.addJoinedMember(this);
+    }
+
+    // 소속 커뮤니티 해제
+    public void unsetJoinedCommunity() {
+        this.joinedCommunity = null;
     }
 
 
