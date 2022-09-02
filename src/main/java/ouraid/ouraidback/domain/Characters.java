@@ -98,7 +98,7 @@ public class Characters {
     // 캐릭터 길드 가입
     public void joinNewGuild(Guild guild) {
         this.joinedGuild = guild;
-        guild.addGuildCharacter(this);
+        guild.joinGuildCharacter(this);
     }
 
     // 캐릭터 커뮤니티 가입
