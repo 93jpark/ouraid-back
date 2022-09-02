@@ -46,16 +46,17 @@ public class Guild {
     }
 
     // 길드 멤버 가입
-    public void addGuildMember(GuildMember guildMember) {
-        guildMembers.add(guildMember);
-        //guildMember.setGuild(this);
+    public void joinGuildMember(Member member) {
+        GuildMember gm = GuildMember.createGuildMember(this, member);
+        guildMembers.add(gm);
+        member.setJoinedCommunity(this.joinedCommunity);
     }
 
     // 길드 캐릭터 가입
-    public void addGuildCharacter(Characters character) {
+    public void joinGuildCharacter(Characters character) {
         this.guildCharacters.add(character);
+        
     }
-
 
     // 길드 캐릭터 탈퇴
     public void leaveGuildByCharacter(Characters character) {
