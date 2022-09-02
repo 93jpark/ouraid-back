@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.Community;
+import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.repository.CommunityRepository;
 
 import javax.persistence.EntityManager;
@@ -29,6 +30,14 @@ public class CommunityService {
     }
 
     // 연합 정보 업데이트 - 연합장, 소속멤버, 소속길드
+    @Transactional
+    public void changeMaster(Long comId, Member newMaster) {
+        Community findCom = communityRepository.findOne(comId);
+        findCom.getCommunityMaster().unsetCommunityMaster();
+        findCom.changeMaster(newMaster);
+        newMaster.setCommunityMaster(findCom);
+    }
+
 
     // 연합 해체
 
