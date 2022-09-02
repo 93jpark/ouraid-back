@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import ouraid.ouraidback.domain.Community;
 import ouraid.ouraidback.domain.Guild;
 import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.Server;
@@ -21,8 +22,8 @@ import static org.junit.Assert.fail;
 public class GuildServiceTest {
 
     @Autowired GuildService guildService;
-    @Autowired GuildRepository guildRepository;
     @Autowired MemberService memberService;
+    @Autowired CommunityService communityService;
 
     @Test
     public void 길드_생성() throws Exception {
@@ -92,5 +93,30 @@ public class GuildServiceTest {
 
         //then
         assertEquals(newGuild.getGuildMaster().getNickname(), "블링벨");
+    }
+
+    @Test
+    public void 소속_연합명_길드_조회() throws Exception {
+        //given
+        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        memberService.registerMember(newMember);
+        Guild guildA = Guild.create(Server.SHUSIA, "void", 3, newMember, null);
+        Long guildAId = guildService.registerGuild(guildA);
+        Guild guildB = Guild.create(Server.SHUSIA, "voider", 3, newMember, null);
+        Long guildBId = guildService.registerGuild(guildB);
+        Guild guildC = Guild.create(Server.SHUSIA, "탑클", 3, newMember, null);
+        Long guildCId = guildService.registerGuild(guildC);
+        Community community = Community.create(Server.SHUSIA, "void", newMember);
+        communityService.registerCommunity(community);
+        guildA.joinNewCommunity(community);
+        guildB.joinNewCommunity(community);
+        guildC.joinNewCommunity(community);
+
+        //when
+        int communitySize = guildService.findGuildByJoinedCommunity("void").size();
+
+        //then
+        assertEquals(3, communitySize);
+
     }
 }
