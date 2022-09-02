@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.Community;
@@ -37,6 +38,25 @@ public class CommunityServiceTest {
         Community findCom = communityService.findByComId(comId);
         assertEquals(findCom.getName(), "void");
         assertEquals(findCom.getCommunityMaster().getNickname(), "유니츠");
+    }
+
+    @Test
+    @Rollback(false)
+    public void 연합_마스터_변경() throws Exception {
+        //given
+        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "12345", Server.SHUSIA);
+        memberService.registerMember(newMember);
+        Member otherMember = Member.create("블링벨", "bling@gmail.com", "12345", Server.SHUSIA);
+        memberService.registerMember(otherMember);
+        Community newCom = Community.create(Server.SHUSIA, "void", newMember);
+        Long comId = communityService.registerCommunity(newCom);
+
+        //when
+        newCom.changeMaster(otherMember);
+
+        //then
+        log.info(String.valueOf(newMember.getOwnCommunity() == null));
+        assertEquals("블링벨", newCom.getCommunityMaster().getNickname());
     }
 
 }
