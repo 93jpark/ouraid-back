@@ -5,10 +5,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.Community;
 import ouraid.ouraidback.domain.Guild;
+import ouraid.ouraidback.domain.GuildMember;
 import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.Server;
 import ouraid.ouraidback.repository.GuildRepository;
@@ -117,6 +119,47 @@ public class GuildServiceTest {
 
         //then
         assertEquals(3, communitySize);
+    }
 
+    @Test
+    //@Rollback(false)
+    public void 길드멤버_테스트() throws Exception {
+        //given
+        Member memberA = Member.create("블링벨", "blingbell@gmail.com", "123", Server.SHUSIA);
+        memberService.registerMember(memberA);
+
+        Member memberB = Member.create("떼바", "theva@gmail.com", "123", Server.SHUSIA);
+        memberService.registerMember(memberB);
+
+        Member memberC = Member.create("오수재", "o-sujae@gmail.com", "123", Server.SHUSIA);
+        memberService.registerMember(memberC);
+
+        Member memberD = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        memberService.registerMember(memberD);
+
+        Guild guildA = Guild.create(Server.SHUSIA, "void", 3, memberD, null);
+        Long guildAId = guildService.registerGuild(guildA);
+        Guild guildB = Guild.create(Server.SHUSIA, "voider", 3, memberD, null);
+        Long guildBId = guildService.registerGuild(guildB);
+        Guild guildC = Guild.create(Server.SHUSIA, "탑클", 3, memberD, null);
+        Long guildCId = guildService.registerGuild(guildC);
+
+
+        Community community = Community.create(Server.SHUSIA, "void", memberD);
+        communityService.registerCommunity(community);
+
+        guildA.joinNewCommunity(community);
+        guildB.joinNewCommunity(community);
+        guildC.joinNewCommunity(community);
+
+        guildA.joinGuildMember(memberA);
+        guildA.joinGuildMember(memberB);
+        guildA.joinGuildMember(memberC);
+        guildA.joinGuildMember(memberD);
+
+        //when
+
+
+        //then
     }
 }

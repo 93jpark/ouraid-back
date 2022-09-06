@@ -30,7 +30,7 @@ public class CommunityService {
         return communityRepository.register(community);
     }
 
-    /* 연합 정보 업데이트 - 연합장, 소속멤버, 소속길드 */
+        /* 연합 정보 업데이트 - 연합장, 소속멤버, 소속길드 */
     // 연합마스터 수정
     @Transactional
     public void changeMaster(Long comId, Member newMaster) {

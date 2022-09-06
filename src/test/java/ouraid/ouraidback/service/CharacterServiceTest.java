@@ -21,6 +21,7 @@ import ouraid.ouraidback.domain.Characters;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -30,20 +31,12 @@ import static org.junit.Assert.fail;
 @Transactional @Slf4j
 public class CharacterServiceTest {
 
-    @Autowired
-    MemberService memberService;
+    @Autowired MemberService memberService;
+    @Autowired CharacterService characterService;
+    @Autowired GuildService guildService;
+    @Autowired CommunityService communityService;
 
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    CharacterService characterService;
-
-    @Autowired
-    CharacterRepository characterRepository;
-
-    @Autowired
-    EntityManager em;
+    @Autowired EntityManager em;
 
     @Test
     public void 캐릭터_기본정보_생성() {
@@ -54,7 +47,7 @@ public class CharacterServiceTest {
         Long savedCharId = characterService.registerCharacter(newCharacter);
 
         //when
-        Characters findCharacter = characterRepository.findOne(savedCharId);
+        Characters findCharacter = characterService.findOne(savedCharId);
 
         //then
         assertEquals(savedCharId, findCharacter.getId());
@@ -91,7 +84,7 @@ public class CharacterServiceTest {
 
         //when
         characterService.updateCharacterName(savedCharId, "유닛츠");
-        Characters findChar = characterRepository.findOne(savedCharId);
+        Characters findChar = characterService.findOne(savedCharId);
 
         //then
         assertEquals(findChar.getName(), "유닛츠");
@@ -107,10 +100,41 @@ public class CharacterServiceTest {
 
         //when
         characterService.updateCharacterAbility(savedCharId, 9.9);
-        Characters findChar = characterRepository.findOne(savedCharId);
+        Characters findChar = characterService.findOne(savedCharId);
         log.info(findChar.getAbility().getClass().toString());
 
         //then
         assertEquals(findChar.getAbility().setScale(2), BigDecimal.valueOf(9.90).setScale(2));
+    }
+
+    @Test
+    public void 특정길드_멤버의캐릭터_조회() throws Exception {
+        //given
+        Member member = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        memberService.registerMember(member);
+
+        Guild guild = Guild.create(Server.SHUSIA, "void", 3, member, null);
+        Long guildAId = guildService.registerGuild(guild);
+
+        Community community = Community.create(Server.SHUSIA, "void", member);
+        communityService.registerCommunity(community);
+
+        guild.joinNewCommunity(community);
+        guild.joinGuildMember(member);
+
+        Characters charA = Characters.create(Server.SHUSIA, "유니처", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member, guild, community);
+        Long charAId = characterService.registerCharacter(charA);
+
+        Characters charB = Characters.create(Server.SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member, guild, community);
+        Long charBId = characterService.registerCharacter(charB);
+
+        Characters charC = Characters.create(Server.SHUSIA, "유닛츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member, guild, community);
+        Long charCId = characterService.registerCharacter(charC);
+
+        //when
+        List<Characters> charList = characterService.findCharactersByMemberWithGuild(guild.getName(), member.getNickname());
+
+        //then
+        assertEquals(3,charList.size());
     }
 }

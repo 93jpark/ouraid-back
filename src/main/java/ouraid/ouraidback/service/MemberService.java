@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ouraid.ouraidback.domain.Guild;
 import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Member;
 
@@ -30,6 +31,13 @@ public class MemberService {
     // 회원탈퇴
 
 
+        /* 멤버 길드 추가 */
+    @Transactional
+    public void joinNewGuild(Member member, Guild guild) {
+        
+    }
+
+
     // 회원 정보 수정
     @Transactional
     public void updateMemberNickname(Long memberId, String newName) {
@@ -40,7 +48,6 @@ public class MemberService {
             log.info(e.getMessage());
         }
     }
-
 
     // 회원 검색
     @Transactional(readOnly = true) // 모두 조회
