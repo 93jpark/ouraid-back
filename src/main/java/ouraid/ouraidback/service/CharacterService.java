@@ -32,8 +32,17 @@ public class CharacterService {
     }
 
     // 캐릭터 삭제
+    @Transactional
+    public void removeCharacter(Characters ch) {
+        if(ch != null) {
+            em.remove(ch);
+        } else {
+            log.info("{} is not exists or something goes wrong", ch.getName());
+        }
+    }
 
-    /* 캐릭터 정보 업데이트 */
+        /* 캐릭터 정보 업데이트 */
+    // 캐릭터명 수정
     @Transactional
     public void updateCharacterName(Long charId, String newName) {
         try {
@@ -46,6 +55,7 @@ public class CharacterService {
         }
     }
 
+    // 캐릭터 항마 변경
     @Transactional
     public void updateCharacterAbility(Long charId, Double ability) {
         try {
@@ -57,7 +67,6 @@ public class CharacterService {
             log.warn("CharacterService.updateCharacterAbility() : 항마 변경 실패 - {}", e.getMessage());
         }
     }
-
 
 
         /* 캐릭터 조회 */
