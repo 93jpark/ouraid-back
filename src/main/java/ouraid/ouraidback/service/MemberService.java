@@ -6,6 +6,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.Guild;
+import ouraid.ouraidback.domain.GuildMember;
+import ouraid.ouraidback.repository.CharacterRepository;
 import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Member;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final CharacterRepository characterRepository;
 
     // 회원가입
     @Transactional
@@ -28,13 +31,14 @@ public class MemberService {
         return memberId;
     }
 
-    // 회원탈퇴
-
-
-        /* 멤버 길드 추가 */
+    // 회원 탈퇴
     @Transactional
-    public void joinNewGuild(Member member, Guild guild) {
-        
+    public void memberWithdraw(Member member) {
+        if(member.getAvailability()) {
+            member.changeMemberStatus();
+        } else {
+            log.info("{}'s account is already inactivated.", member.getNickname());
+        }
     }
 
 
@@ -47,6 +51,12 @@ public class MemberService {
         } catch (Exception e) {
             log.info(e.getMessage());
         }
+    }
+
+    // Member의 모든 캐릭터 삭제
+    @Transactional
+    public void removeMemberOwnCharacters() {
+        characterRepository.find
     }
 
     // 회원 검색
