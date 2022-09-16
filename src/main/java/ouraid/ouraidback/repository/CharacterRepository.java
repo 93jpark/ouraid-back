@@ -1,14 +1,17 @@
 package ouraid.ouraidback.repository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ouraid.ouraidback.domain.Characters;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class CharacterRepository {
 
     private final EntityManager em;
@@ -16,6 +19,10 @@ public class CharacterRepository {
     public Long register(Characters character) {
         em.persist(character);
         return character.getId();
+    }
+
+    public void remove(Characters character) {
+        em.remove(character);
     }
 
     // 단일 캐릭터 조회
@@ -82,9 +89,17 @@ public class CharacterRepository {
     public List<Characters> findCharactersByMemberWithGuild(String guildName, String memberName) {
         return em.createQuery("select c from Characters c " +
                         "where c.characterOwner.nickname = :memberName " +
-                        "and c.joinedGuild.name = :guildName")
+                        "and c.joinedGuild.name = :guildName", Characters.class)
                 .setParameter("memberName", memberName)
                 .setParameter("guildName", guildName)
+                .getResultList();
+    }
+
+    // 특정 멤버의 모든 캐릭터 조회
+    public List<Characters> findOwnCharactersByMember(String memberName) {
+        return em.createQuery("select c from Characters c " +
+                        "where c.characterOwner.nickname = :memberName ", Characters.class)
+                .setParameter("memberName", memberName)
                 .getResultList();
     }
 

@@ -2,6 +2,7 @@ package ouraid.ouraidback.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import ouraid.ouraidback.domain.GuildMember;
 import ouraid.ouraidback.domain.Member;
 
 import javax.persistence.EntityManager;
@@ -52,6 +53,13 @@ public class MemberRepository {
         return em.createQuery("select m from Member m join m.joinedGuilds g " +
                         "where g.guild.name = :gName", Member.class)
                 .setParameter("gName", gName)
+                .getResultList();
+    }
+
+    public List<GuildMember> findByGuildMember(String gName, String mName) {
+        return em.createQuery("select gm from GuildMember gm where gm.member.nickname = :mName and gm.guild.name = :gName", GuildMember.class)
+                .setParameter("gName", gName)
+                .setParameter("mName", mName)
                 .getResultList();
     }
 }
