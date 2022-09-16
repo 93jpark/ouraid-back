@@ -15,8 +15,8 @@ import ouraid.ouraidback.domain.enums.Server;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 
 @RunWith(SpringRunner.class)
@@ -32,7 +32,6 @@ public class MemberServiceTest {
 
     @Test
     public void 단일_멤버_생성() throws Exception {
-
         //given
         Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
         Long savedMemberId = memberService.registerMember(newMember);
@@ -64,7 +63,6 @@ public class MemberServiceTest {
         //given
         Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
         Long memberId = memberService.registerMember(newMember);
-
         //when
         memberService.updateMemberNickname(memberId, "유우니이츠으");
         Member findMember = memberService.findMemberByName("유우니이츠으").get(0);
@@ -85,6 +83,5 @@ public class MemberServiceTest {
         //then
         assertEquals(findMember.getAvailability(), false);
     }
-
 
 }

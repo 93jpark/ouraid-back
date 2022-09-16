@@ -91,7 +91,7 @@ public class GuildServiceTest {
         //when
         Member findMember = memberService.findMemberByName("블링벨").get(0);
         Guild findGuild = guildService.findGuildByName("void").get(0);
-        guildService.changeGuildMaster(findGuild.getId(), findMember);
+        guildService.changeGuildMaster(findGuild.getId(), findMember.getId());
 
         //then
         assertEquals(newGuild.getGuildMaster().getNickname(), "블링벨");
