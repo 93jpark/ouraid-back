@@ -68,7 +68,7 @@ public class GuildService {
         Member owner = newChar.getCharacterOwner();
         Guild guild = guildRepository.findOne(guildId);
         Community gCom = guild.getJoinedCommunity();
-        GuildMember gm = memberRepository.findByGuildMember(guild.getName(), owner.getNickname()).get(0);
+        GuildMember gm = guildRepository.findByGuildMember(guild.getName(), owner.getNickname()).get(0);
 
         // 해당 길드에 특정 멤버가 최초로 가입하는 경우,
         if(gm==null || !guild.getGuildMembers().contains(gm)) {
@@ -84,7 +84,7 @@ public class GuildService {
         }
 
         // add char's owner Member on guild member list
-        if(memberRepository.findByGuildMember(guild.getName(), newChar.getCharacterOwner().getNickname()).isEmpty()) {
+        if(guildRepository.findByGuildMember(guild.getName(), newChar.getCharacterOwner().getNickname()).isEmpty()) {
             guild.joinGuildMember(owner);
         }
     }
@@ -95,7 +95,7 @@ public class GuildService {
         Characters findChar = characterRepository.findOne(characterId);
         Member owner = findChar.getCharacterOwner();
         Community joinedCommunity = findChar.getJoinedCommunity();
-        GuildMember gm = memberRepository.findByGuildMember(findGuild.getName(), owner.getNickname()).get(0);
+        GuildMember gm = guildRepository.findByGuildMember(findGuild.getName(), owner.getNickname()).get(0);
 
         // 해당 캐릭터가 탈퇴하면 소속 캐릭터의 수가 0인경우, 길드 멤버리스트에서 해당 멤버를 제거
         if(characterRepository.findCharactersByMemberWithGuild(findGuild.getName(), owner.getNickname()).size() <= 1) {
