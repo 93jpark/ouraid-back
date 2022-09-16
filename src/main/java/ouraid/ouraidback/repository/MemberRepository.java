@@ -56,10 +56,4 @@ public class MemberRepository {
                 .getResultList();
     }
 
-    public List<GuildMember> findByGuildMember(String gName, String mName) {
-        return em.createQuery("select gm from GuildMember gm where gm.member.nickname = :mName and gm.guild.name = :gName", GuildMember.class)
-                .setParameter("gName", gName)
-                .setParameter("mName", mName)
-                .getResultList();
-    }
 }
