@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -25,11 +27,17 @@ public class GuildMember {
     @JoinColumn(name = "guild_id")
     private Guild guild;
 
+    private LocalDateTime joinedDate;
+
     // 생성 메소드
     public static GuildMember createGuildMember(Guild guild, Member member) {
         GuildMember guildMember = new GuildMember();
         guildMember.guild = guild;
         guildMember.member = member;
         return guildMember;
+    }
+
+    public void setJoinedDate(LocalDateTime time) {
+        this.joinedDate = time;
     }
 }

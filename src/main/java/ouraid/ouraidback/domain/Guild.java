@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ouraid.ouraidback.domain.enums.Server;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +49,12 @@ public class Guild {
     // 길드 멤버 가입
     public void joinGuildMember(Member member) {
         GuildMember gm = GuildMember.createGuildMember(this, member);
+        gm.setJoinedDate(LocalDateTime.now());
         guildMembers.add(gm);
-        member.setJoinedCommunity(this.joinedCommunity);
+        member.addJoinedGuild(gm);
+        if(this.joinedCommunity!=null) {
+            member.setJoinedCommunity(this.joinedCommunity);
+        }
     }
 
     // 길드 캐릭터 가입

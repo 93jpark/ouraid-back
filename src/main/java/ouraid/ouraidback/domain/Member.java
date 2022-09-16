@@ -144,8 +144,8 @@ public class Member {
         joinedGuilds.add(guildMember);
     }
 
-    public void leaveJoinedGuild(GuildMember guildMember) {
-        this.joinedGuilds.remove(guildMember);
+    public void leaveJoinedGuild(Guild guild) {
+        this.joinedGuilds.remove(guild);
     }
 
 

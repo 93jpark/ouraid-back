@@ -49,7 +49,6 @@ public class Community {
         community.server = server;
         community.name = name;
         community.communityMaster = master;
-
         return community;
     }
 
