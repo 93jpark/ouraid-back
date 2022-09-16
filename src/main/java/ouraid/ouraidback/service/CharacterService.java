@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ouraid.ouraidback.domain.Exception.ResourceNotFoundException;
 import ouraid.ouraidback.repository.CharacterRepository;
 import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Characters;
@@ -26,18 +27,19 @@ public class CharacterService {
     // 캐릭터 생성
     @Transactional
     public Long registerCharacter(Characters character) {
-        validateDuplicateCharacter(character);
+        validateDuplicateCharacter(character.getName());
         characterRepository.register(character);
         return character.getId();
     }
 
     // 캐릭터 삭제
     @Transactional
-    public void removeCharacter(Characters ch) {
-        if(ch != null) {
-            em.remove(ch);
+    public void removeCharacter(Long cId) {
+        Characters ch = characterRepository.findOne(cId);
+        if(ch!=null) {
+            characterRepository.remove(ch);
         } else {
-            log.info("{} is not exists or something goes wrong", ch.getName());
+            throw new ResourceNotFoundException("Characters", "id", cId);
         }
     }
 
@@ -46,6 +48,7 @@ public class CharacterService {
     @Transactional
     public void updateCharacterName(Long charId, String newName) {
         try {
+            validateDuplicateCharacter(newName);
             Characters findChar = characterRepository.findOne(charId);
             findChar.changeName(newName);
             em.flush();
@@ -57,7 +60,10 @@ public class CharacterService {
 
     // 캐릭터 항마 변경
     @Transactional
-    public void updateCharacterAbility(Long charId, Double ability) {
+    public void updateCharacterAbility(Long charId, Double ability) throws Exception {
+        if(ability < 0) {
+            throw new Exception("abiliity cannot be negative");
+        }
         try {
             Characters findChar = characterRepository.findOne(charId);
             findChar.changeAbility(ability);
@@ -85,6 +91,11 @@ public class CharacterService {
         return characterRepository.findByServer(sName);
     }
 
+    // 특정 길드의 캐릭터 모두 조회
+    public List<Characters> findCharactersByGuild(String gName) {
+        return characterRepository.findByGuild(gName);
+    }
+
     // 특정 길드의 멤버가 지닌 캐릭터 조회
     public List<Characters> findCharactersByMemberWithGuild(String gName, String mName) {
         return characterRepository.findCharactersByMemberWithGuild(gName, mName);
@@ -92,13 +103,13 @@ public class CharacterService {
 
     /* 캐릭명 중복 검사 */
     @Transactional(readOnly = true)
-    public void validateDuplicateCharacter(Characters character) {
-        List<Characters> findChar = characterRepository.findByCharName(character.getName());
+    public void validateDuplicateCharacter(String charName) {
+        List<Characters> findChar = characterRepository.findByCharName(charName);
         log.info("{} get ListCharacters from repository", findChar.size());
 
         if (!findChar.isEmpty()) {
             throw new IllegalStateException("MemberService.validateDuplicateMember() : 이미 존재하는 캐릭터 명");
         }
-        log.info("{} can be registered", character.getName());
+        log.info("{} can be registered", charName);
     }
 }
