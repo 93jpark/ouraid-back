@@ -30,6 +30,10 @@ public class Characters {
 
     @NotNull private BigDecimal ability;
 
+    private Integer expHardLotus;
+    private Integer expDungeon;
+    private Integer expNormalLotus;
+
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") private Member characterOwner;
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "guild_id") private Guild joinedGuild;
@@ -54,6 +58,9 @@ public class Characters {
         character.subClass = subClass;
         character.ability = BigDecimal.valueOf(ability);
         character.characterOwner = characterOwner;
+        character.expDungeon = 0;
+        character.expHardLotus = 0;
+        character.expNormalLotus = 0;
 
         return character;
     }
@@ -94,6 +101,14 @@ public class Characters {
     public void changeAbility(Double ability) {
         this.ability = BigDecimal.valueOf(ability);
     }
+
+    // 레이드 횟수 증가
+    public void incExpDungeon() { this.expDungeon = this.expDungeon+1; }
+
+    public void incExpNormalLotus() { this.expNormalLotus = this.expNormalLotus+1; }
+
+    public void incExpHardLotus() { this.expHardLotus = this.expHardLotus+1; }
+
 
     // 캐릭터 길드 가입
     public void joinNewGuild(Guild guild) {
