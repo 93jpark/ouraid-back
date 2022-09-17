@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
@@ -29,7 +30,7 @@ public class Guild {
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") @NotNull private Member guildMaster;
 
-    @OneToMany(mappedBy="member", cascade = PERSIST) private List<GuildMember> guildMembers = new ArrayList<>();
+    @OneToMany(mappedBy="member", cascade = ALL) private List<GuildMember> guildMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "joinedGuild", cascade = PERSIST) private List<Characters> guildCharacters = new ArrayList<>();
 
@@ -46,16 +47,24 @@ public class Guild {
         return guild;
     }
 
-    // 길드 멤버 가입
-    public void joinGuildMember(Member member) {
-        GuildMember gm = GuildMember.createGuildMember(this, member);
-        gm.setJoinedDate(LocalDateTime.now());
-        guildMembers.add(gm);
-        member.addJoinedGuild(gm);
-        if(this.joinedCommunity!=null) {
-            member.setJoinedCommunity(this.joinedCommunity);
-        }
-    }
+//    // 길드 멤버 가입
+//    public void joinGuildMember(Member member) {
+//        GuildMember gm = GuildMember.createGuildMember(this, member);
+//        gm.setJoinedDate(LocalDateTime.now());
+//        guildMembers.add(gm);
+//        member.addJoinedGuild(this);
+//        if(this.joinedCommunity!=null) {
+//            member.setJoinedCommunity(this.joinedCommunity);
+//        }
+//    }
+//
+//    // 길드 멤버 탈퇴
+//    public void leaveGuildByMember(Member member) {
+//        GuildMember gm = GuildMember.createGuildMember(this, member);
+//        this.guildMembers.remove(gm);
+//        //member.leaveJoinedGuild(this);
+//    }
+
 
     // 길드 캐릭터 가입
     public void joinGuildCharacter(Characters character) {
@@ -68,11 +77,6 @@ public class Guild {
         this.guildCharacters.remove(character);
     }
 
-    // 길드 멤버 탈퇴
-    public void leaveGuildByMember(GuildMember guildMember) {
-        this.guildMembers.remove(guildMember);
-        //member.leaveJoinedGuild(this);
-    }
 
     // 길드 마스터 변경
     public void changeGuildMaster(Member member) {

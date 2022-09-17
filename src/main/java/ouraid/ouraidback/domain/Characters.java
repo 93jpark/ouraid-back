@@ -65,33 +65,6 @@ public class Characters {
         return character;
     }
 
-    /**
-     * create character with joined guild and community
-     * @param server
-     * @param name
-     * @param mainClass
-     * @param subClass
-     * @param ability
-     * @param characterOwner
-     * @param joinedGuild
-     * @param joinedCommunity
-     * @return
-     */
-    public static Characters create(Server server, String name, MainClass mainClass, SubClass subClass, Double ability, Member characterOwner, Guild joinedGuild, Community joinedCommunity) {
-        Characters character = new Characters();
-
-        character.server = server;
-        character.name = name;
-        character.mainClass = mainClass;
-        character.subClass = subClass;
-        character.ability = BigDecimal.valueOf(ability);
-        character.characterOwner = characterOwner;
-        character.joinedGuild = joinedGuild;
-        character.joinedCommunity = joinedCommunity;
-
-        return character;
-    }
-
     // 캐릭명 변경
     public void changeName(String newName) {
         this.name = newName;

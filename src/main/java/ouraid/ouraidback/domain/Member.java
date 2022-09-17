@@ -37,7 +37,7 @@ public class Member {
 
     @OneToMany(mappedBy = "guildMaster", cascade = PERSIST) @Nullable private List<Guild> ownGuilds = new ArrayList<>();
 
-    @OneToMany(mappedBy="guild", cascade = PERSIST) @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
+    @OneToMany(mappedBy="guild", cascade = ALL) @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
 
     // 소유캐릭 삭제 시 캐릭 엔티티 삭제
     @OneToMany(mappedBy = "characterOwner", cascade = ALL, orphanRemoval = true) private List<Characters> ownCharacters = new ArrayList<>();
@@ -98,7 +98,6 @@ public class Member {
     }
 
     //소유길드 추가
-
     public void addOwnGuild(Guild guild) {
         this.ownGuilds.add(guild);
     }
@@ -113,7 +112,19 @@ public class Member {
         this.availability = !this.availability;
     }
 
+    // 멤버 길드 가입
+    public void addJoinedGuild(Guild guild) {
+        GuildMember gm = GuildMember.createGuildMember(guild, this);
+        guild.getGuildMembers().add(gm);
+        joinedGuilds.add(gm);
+    }
+
     // 멤버 길드 탈퇴
+    public void leaveJoinedGuild(Guild guild) {
+        GuildMember gm = GuildMember.createGuildMember(guild, this);
+        guild.getGuildMembers().remove(gm);
+        this.joinedGuilds.remove(gm);
+    }
 
 
     // 커뮤니티 마스터 멤버 설정
@@ -139,14 +150,7 @@ public class Member {
     }
 
 
-    // 연관관계 편입 메소드
-    public void addJoinedGuild(GuildMember guildMember) {
-        joinedGuilds.add(guildMember);
-    }
 
-    public void leaveJoinedGuild(Guild guild) {
-        this.joinedGuilds.remove(guild);
-    }
 
 
 }
