@@ -1,14 +1,21 @@
 package ouraid.ouraidback.domain.party;
 
-import com.sun.istack.NotNull;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
+import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Member;
+import ouraid.ouraidback.domain.enums.PartyStatus;
+import ouraid.ouraidback.domain.enums.PartyType;
+import ouraid.ouraidback.domain.enums.RecruitType;
 import ouraid.ouraidback.domain.enums.Server;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -22,21 +29,39 @@ public class Party {
     @Enumerated(EnumType.STRING) @NotNull
     protected Server server;
 
-    @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") @NotNull
-    protected Member creatorMember;
+    // 파티 타입
+    @Enumerated(EnumType.STRING) @NotNull
+    protected PartyType partyType;
 
-    @NotNull private int partyCapacity;
+    // 모집 타입
+    @Enumerated(EnumType.STRING) @NotNull
+    protected RecruitType recruitType;
 
-    @NotNull
-    protected Boolean acceptFreeRider = false;
+    // 파티 상태
+    @Enumerated(EnumType.STRING) @NotNull
+    protected PartyStatus partyStatus;
 
-    @NotNull
-    protected int freeRiderCapacity = 0;
+    // 파티 정원
+    @NotNull protected int partyCapacity;
 
-    @Nullable private double minAbility;
+    // 파티 현 인원
+    @NotNull protected int registeredMemberSize = 1;
 
-    @NotNull private Boolean fulfillment = false;
+    // 업둥이 정원
+    @NotNull protected int freeRiderCapacity;
 
-    @OneToMany(mappedBy="joinedMember") private List<PartyMember> joinedMembers = new ArrayList<>();
+    // 최소 항마컷
+    @Nullable protected BigDecimal minAbility;
+
+    @NotNull LocalDateTime reservedTime;
+
+    @ManyToOne(fetch = LAZY, cascade = ALL) @JoinColumn(name = "member_id") @NotNull
+    protected Member partyHolderMember;
+
+    @ManyToOne(fetch = LAZY, cascade = ALL) @JoinColumn(name = "character_id") @NotNull
+    protected Characters partyHolderCharacter;
+
+    @OneToMany(mappedBy="joinedPartyCharacter", cascade = ALL)
+    private List<PartyParticipant> partyParticipants = new ArrayList<>();
 
 }
