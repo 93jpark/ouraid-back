@@ -111,25 +111,32 @@ public class CharacterServiceTest {
     public void 특정길드_멤버의캐릭터_조회() throws Exception {
         //given
         Member member = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
-        memberService.registerMember(member);
+        Long memberId = memberService.registerMember(member);
 
         Guild guild = Guild.create(Server.SHUSIA, "void", 3, member, null);
-        Long guildAId = guildService.registerGuild(guild);
+        Long guildId = guildService.registerGuild(guild);
 
         Community community = Community.create(Server.SHUSIA, "void", member);
-        communityService.registerCommunity(community);
+        Long comId = communityService.registerCommunity(community);
 
-        guild.joinNewCommunity(community);
-        guild.joinGuildMember(member);
+        communityService.addGuild(comId, guildId);
+        guildService.joinGuildMember(guildId, memberId);
 
-        Characters charA = Characters.create(Server.SHUSIA, "유니처", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member, guild, community);
+        Characters charA = Characters.create(Server.SHUSIA, "유니처", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
         Long charAId = characterService.registerCharacter(charA);
+        guildService.joinNewCharacter(guildId, charAId);
+        communityService.addCharacter(comId, charAId);
 
-        Characters charB = Characters.create(Server.SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member, guild, community);
+        Characters charB = Characters.create(Server.SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
         Long charBId = characterService.registerCharacter(charB);
+        guildService.joinNewCharacter(guildId, charBId);
+        communityService.addCharacter(comId, charAId);
 
-        Characters charC = Characters.create(Server.SHUSIA, "유닛츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member, guild, community);
+        Characters charC = Characters.create(Server.SHUSIA, "유닛츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
         Long charCId = characterService.registerCharacter(charC);
+        guildService.joinNewCharacter(guildId, charCId);
+        communityService.addCharacter(comId, charAId);
+        member.addOwnCharacters(charA, charB, charC);
 
         //when
         List<Characters> charList = characterService.findCharactersByMemberWithGuild(guild.getName(), member.getNickname());
