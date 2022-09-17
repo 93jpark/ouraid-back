@@ -33,6 +33,7 @@ public class Characters {
     private Integer expHardLotus;
     private Integer expDungeon;
     private Integer expNormalLotus;
+    private Integer expWorldBoss;
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") private Member characterOwner;
 
@@ -82,6 +83,7 @@ public class Characters {
 
     public void incExpHardLotus() { this.expHardLotus = this.expHardLotus+1; }
 
+    public void incExpWorldBoss() { this.expWorldBoss = this.expWorldBoss+1; }
 
     // 캐릭터 길드 가입
     public void joinNewGuild(Guild guild) {
