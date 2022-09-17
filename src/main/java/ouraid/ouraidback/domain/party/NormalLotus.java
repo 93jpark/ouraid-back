@@ -36,7 +36,7 @@ public class NormalLotus extends Party {
      * @param reservedTime
      * @return
      */
-    public Party createNormalLotusParty(RecruitType recruitType,
+    public static Party createNormalLotusParty(RecruitType recruitType,
                                     Server server,
                                     Member partyHolderMember,
                                     Characters partyHolderCharacter,

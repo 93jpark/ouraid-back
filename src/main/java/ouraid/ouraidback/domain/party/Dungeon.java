@@ -35,7 +35,7 @@ public class Dungeon extends Party {
      * @param reservedTime
      * @return
      */
-    public Party createDungeonParty(RecruitType recruitType,
+    public static Party createDungeonParty(RecruitType recruitType,
                                     Server server,
                                     Member partyHolderMember,
                                     Characters partyHolderCharacter,

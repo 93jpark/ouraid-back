@@ -39,7 +39,7 @@ public class HardLotus extends Party {
      * @param reservedTime
      * @return
      */
-    public Party createHardLotusParty(RecruitType recruitType,
+    public static Party createHardLotusParty(RecruitType recruitType,
                                       Server server,
                                       Member partyHolderMember,
                                       Characters partyHolderCharacter,

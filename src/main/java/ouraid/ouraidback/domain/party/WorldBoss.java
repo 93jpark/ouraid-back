@@ -39,7 +39,7 @@ public class WorldBoss extends Party {
      * @param reservedTime
      * @return
      */
-    public Party createWorldBossParty(RecruitType recruitType,
+    public static Party createWorldBossParty(RecruitType recruitType,
                                         Server server,
                                         Member partyHolderMember,
                                         Characters partyHolderCharacter,
