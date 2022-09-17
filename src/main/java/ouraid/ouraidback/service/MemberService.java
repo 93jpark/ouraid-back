@@ -65,8 +65,6 @@ public class MemberService {
         } catch (Exception e) {
             log.info(e.getMessage());
         }
-
-
     }
 
     // Member의 모든 캐릭터 삭제
@@ -77,12 +75,6 @@ public class MemberService {
             log.info("{} is removed", c.getName());
             characterService.removeCharacter(c.getId());
         }
-    }
-
-    // Member의 길드 탈퇴
-    @Transactional
-    public void leaveMemberJoinedGuild(Member member, Guild guild) {
-
     }
 
     // 회원 검색

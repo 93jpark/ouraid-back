@@ -72,8 +72,8 @@ public class GuildService {
 
         // 해당 길드에 특정 멤버가 최초로 가입하는 경우,
         if(gm==null || !guild.getGuildMembers().contains(gm)) {
-            guild.joinGuildMember(owner);
-            owner.addJoinedGuild(gm);
+            //guild.joinGuildMember(owner);
+            owner.addJoinedGuild(guild);
         }
 
         // add character on Guild
@@ -85,7 +85,7 @@ public class GuildService {
 
         // add char's owner Member on guild member list
         if(guildRepository.findByGuildMember(guild.getName(), newChar.getCharacterOwner().getNickname()).isEmpty()) {
-            guild.joinGuildMember(owner);
+            //guild.joinGuildMember(owner);
         }
     }
 
@@ -100,7 +100,7 @@ public class GuildService {
         // 해당 캐릭터가 탈퇴하면 소속 캐릭터의 수가 0인경우, 길드 멤버리스트에서 해당 멤버를 제거
         if(characterRepository.findCharactersByMemberWithGuild(findGuild.getName(), owner.getNickname()).size() <= 1) {
             owner.leaveJoinedGuild(findGuild);
-            findGuild.leaveGuildByMember(gm);
+            //findGuild.leaveGuildByMember(owner);
         }
 
         if(findChar.getJoinedGuild()!=null) {
@@ -117,7 +117,17 @@ public class GuildService {
 
 
     // 길드 멤버 가입
+    @Transactional
+    public void joinGuildMember(Long guildId, Long memberId) {
+        Guild guild = guildRepository.findOne(guildId);
+        Member member = memberRepository.findOne(memberId);
 
+        GuildMember gm = GuildMember.createGuildMember(guild, member);
+
+        if(!member.getJoinedGuilds().contains(gm)) {
+            member.addJoinedGuild(guild);
+        }
+    }
 
 
     // 길드멤버 길드 탈퇴
@@ -125,19 +135,22 @@ public class GuildService {
     public void leaveGuildMember(Long guildId, Long memberId) {
         Guild guild = guildRepository.findOne(guildId);
         Member member = memberRepository.findOne(memberId);
+        GuildMember gm = GuildMember.createGuildMember(guild, member);
 
         if (guild!=null) {
             List<Characters> charList = characterService.findCharactersByMemberWithGuild(guild.getName(), member.getNickname());
+            log.info("'{}' guild's {} characters found who owned by {}", guild.getName(), charList.size(), member.getNickname());
+            // 멤버의 캐릭터들 모두 길드 탈퇴
             for(Characters c : charList) {
                 if(guild.getGuildCharacters().contains(c)) {
-                    guild.getGuildCharacters().remove(c);
+                    //guild.getGuildCharacters().remove(c);
+                    log.info("'{}' leave '{}' guild", c.getName(), guild.getName());
                     c.leaveJoinedGuild();
                 } else {
-                    log.info("{} doesn't have character name {}.", guild.getName(), c.getName());
+                    log.info("'{}' guild doesn't have '{}' character.", guild.getName(), c.getName());
                 }
             }
-            if(guild.getGuildMembers().contains(member)) {
-                guild.getGuildMembers().remove(member);
+            if(guild.getGuildMembers().contains(gm)) {
                 member.leaveJoinedGuild(guild);
             } else {
                 log.info("{} doesn't have member nickname {}.", guild.getName(), member.getNickname());
