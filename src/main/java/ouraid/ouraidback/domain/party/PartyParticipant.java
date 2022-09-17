@@ -3,6 +3,7 @@ package ouraid.ouraidback.domain.party;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Member;
 
 import javax.persistence.*;
@@ -23,22 +24,9 @@ public class PartyMember {
     @JoinColumn(name="member_id")
     private Member joinedMember;
 
-    private Boolean freeRider = false;
-
-    private void setJoinedParty(Party party) {
-        this.joinedParty = party;
-    }
-
-    private void setJoinedMember(Member member) {
-        this.joinedMember = member;
-    }
-
-    public static PartyMember createPartyMember(Party party, Member member) {
-        PartyMember partyMember = new PartyMember();
-        partyMember.setJoinedParty(party);
-        partyMember.setJoinedMember(member);
-        return partyMember;
-    }
+    @ManyToOne
+    @JoinColumn(name = "character_id")
+    private Characters joinedCharacter;
 
     public PartyMember(Party joinedParty, Member joinedMember) {
         this.joinedParty = joinedParty;
