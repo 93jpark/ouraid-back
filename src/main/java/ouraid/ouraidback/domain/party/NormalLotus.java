@@ -13,6 +13,7 @@ import ouraid.ouraidback.domain.enums.Server;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static ouraid.ouraidback.domain.enums.PartyStatus.RECRUIT;
 import static ouraid.ouraidback.domain.enums.PartyType.NORMAL;
@@ -40,7 +41,7 @@ public class NormalLotus extends Party {
                                     Server server,
                                     Member partyHolderMember,
                                     Characters partyHolderCharacter,
-                                    LocalDateTime reservedTime)
+                                    Instant reservedTime)
     {
         NormalLotus party = new NormalLotus();
         party.recruitType = recruitType;
@@ -50,6 +51,7 @@ public class NormalLotus extends Party {
         party.partyHolderMember = partyHolderMember;
         party.partyHolderCharacter = partyHolderCharacter;
         party.reservedTime = reservedTime;
+        party.createdTime = Instant.now();
         party.minAbility = BigDecimal.ZERO;
         party.freeRiderCapacity = 0;
         return party;
@@ -75,7 +77,7 @@ public class NormalLotus extends Party {
             Characters partyHolderCharacter,
             int freeRiderCapacity,
             double minAbility,
-            LocalDateTime reservedTime)
+            Instant reservedTime)
     {
         NormalLotus party = new NormalLotus();
         party.recruitType = recruitType;
@@ -87,6 +89,7 @@ public class NormalLotus extends Party {
         party.freeRiderCapacity = freeRiderCapacity;
         party.minAbility = BigDecimal.valueOf(minAbility);
         party.reservedTime = reservedTime;
+        party.createdTime = Instant.now();
         return party;
     }
 
@@ -111,7 +114,7 @@ public class NormalLotus extends Party {
     }
 
     // 파티예정시각 수정
-    public void updateReservedTime(LocalDateTime time) {
+    public void updateReservedTime(Instant time) {
         this.reservedTime = time;
     }
 

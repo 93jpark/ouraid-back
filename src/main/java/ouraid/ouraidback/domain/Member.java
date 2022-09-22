@@ -113,16 +113,18 @@ public class Member {
     }
 
     // 멤버 길드 가입
-    public void addJoinedGuild(Guild guild) {
-        GuildMember gm = GuildMember.createGuildMember(guild, this);
-        guild.getGuildMembers().add(gm);
+    public void addJoinedGuild(GuildMember gm) {
+        //GuildMember gm = GuildMember.createGuildMember(guild, this);
+        //guild.getGuildMembers().add(gm);
+        gm.getGuild().getGuildMembers().add(gm);
         joinedGuilds.add(gm);
     }
 
     // 멤버 길드 탈퇴
-    public void leaveJoinedGuild(Guild guild) {
-        GuildMember gm = GuildMember.createGuildMember(guild, this);
-        guild.getGuildMembers().remove(gm);
+    public void leaveJoinedGuild(GuildMember gm) {
+        //GuildMember gm = GuildMember.createGuildMember(guild, this);
+        //guild.getGuildMembers().remove(gm);
+        gm.getGuild().getGuildMembers().remove(gm);
         this.joinedGuilds.remove(gm);
     }
 
