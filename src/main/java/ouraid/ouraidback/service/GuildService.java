@@ -71,9 +71,9 @@ public class GuildService {
         GuildMember gm = guildRepository.findByGuildMember(guild.getName(), owner.getNickname()).get(0);
 
         // 해당 길드에 특정 멤버가 최초로 가입하는 경우,
-        if(gm==null || !guild.getGuildMembers().contains(gm)) {
+        if(gm==null) {
             //guild.joinGuildMember(owner);
-            owner.addJoinedGuild(guild);
+            owner.addJoinedGuild(gm);
         }
 
         // add character on Guild
@@ -99,7 +99,7 @@ public class GuildService {
 
         // 해당 캐릭터가 탈퇴하면 소속 캐릭터의 수가 0인경우, 길드 멤버리스트에서 해당 멤버를 제거
         if(characterRepository.findCharactersByMemberWithGuild(findGuild.getName(), owner.getNickname()).size() <= 1) {
-            owner.leaveJoinedGuild(findGuild);
+            owner.leaveJoinedGuild(gm);
             //findGuild.leaveGuildByMember(owner);
         }
 
@@ -124,8 +124,8 @@ public class GuildService {
 
         GuildMember gm = GuildMember.createGuildMember(guild, member);
 
-        if(!member.getJoinedGuilds().contains(gm)) {
-            member.addJoinedGuild(guild);
+        if(guildRepository.findGuildMember(guildId, memberId).isEmpty()) {
+            member.addJoinedGuild(gm);
         }
     }
 
@@ -135,7 +135,8 @@ public class GuildService {
     public void leaveGuildMember(Long guildId, Long memberId) {
         Guild guild = guildRepository.findOne(guildId);
         Member member = memberRepository.findOne(memberId);
-        GuildMember gm = GuildMember.createGuildMember(guild, member);
+        //GuildMember gm = GuildMember.createGuildMember(guild, member);
+        GuildMember gm = guildRepository.findGuildMember(guildId, memberId).get(0);
 
         if (guild!=null) {
             List<Characters> charList = characterService.findCharactersByMemberWithGuild(guild.getName(), member.getNickname());
@@ -150,8 +151,8 @@ public class GuildService {
                     log.info("'{}' guild doesn't have '{}' character.", guild.getName(), c.getName());
                 }
             }
-            if(guild.getGuildMembers().contains(gm)) {
-                member.leaveJoinedGuild(guild);
+            if(gm!=null) {
+                member.leaveJoinedGuild(gm);
             } else {
                 log.info("{} doesn't have member nickname {}.", guild.getName(), member.getNickname());
             }
@@ -160,6 +161,8 @@ public class GuildService {
             throw new ResourceNotFoundException("Guild", "id", guildId);
         }
     }
+
+
 
 
         /* 길드 조회 */
@@ -178,6 +181,15 @@ public class GuildService {
     @Transactional(readOnly = true)
     public List<Guild> findGuildByJoinedCommunity(String comName) {
         return guildRepository.findByJoinedCommunityName(comName);
+    }
+
+    // 길드와 멤버 id 기반 GuildMember 검색
+    @Transactional(readOnly = true)
+    public List<GuildMember> findGuildMemberByGuildMember(Long gId, Long mId) {
+        return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId")
+                .setParameter("gId", gId)
+                .setParameter("mId", mId)
+                .getResultList();
     }
 
 
