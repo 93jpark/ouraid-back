@@ -152,12 +152,18 @@ public class GuildServiceTest {
         guildB.joinNewCommunity(community);
         guildC.joinNewCommunity(community);
 
-        memberA.addJoinedGuild(guildA);
-        memberB.addJoinedGuild(guildA);
-        memberC.addJoinedGuild(guildA);
-        memberD.addJoinedGuild(guildA);
+        GuildMember gmA = GuildMember.createGuildMember(guildA, memberA);
+        GuildMember gmB = GuildMember.createGuildMember(guildA, memberB);
+        GuildMember gmC = GuildMember.createGuildMember(guildA, memberC);
+        GuildMember gmD = GuildMember.createGuildMember(guildA, memberD);
+
+        memberA.addJoinedGuild(gmA);
+        memberB.addJoinedGuild(gmB);
+        memberC.addJoinedGuild(gmC);
+        memberD.addJoinedGuild(gmD);
 
         //when
+
 
 
         //then
