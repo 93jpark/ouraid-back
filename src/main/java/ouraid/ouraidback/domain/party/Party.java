@@ -46,7 +46,7 @@ public class Party {
     @NotNull protected int partyCapacity;
 
     // 파티 현 인원
-    @NotNull protected int registeredMemberSize = 1;
+    @NotNull protected int registeredMemberSize = 0;
 
     // 업둥이 정원
     @NotNull protected int freeRiderCapacity;
