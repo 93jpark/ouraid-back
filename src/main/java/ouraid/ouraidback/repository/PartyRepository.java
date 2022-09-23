@@ -3,6 +3,8 @@ package ouraid.ouraidback.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ouraid.ouraidback.domain.enums.ParticipantStatus;
+import ouraid.ouraidback.domain.enums.PartyStatus;
 import ouraid.ouraidback.domain.party.*;
 
 import javax.persistence.EntityManager;
@@ -32,7 +34,11 @@ public class PartyRepository {
     }
 
     // 파티 단일 검색
-    public Party findOne(Long id) { return em.find(Party.class, id); }
+    public Party findOneParty(Long id) { return em.find(Party.class, id); }
+
+    // 파티원 단일 검색
+    public PartyParticipant findOneParticipant(Long id) { return em.find(PartyParticipant.class, id); }
+
 
     // 전체 파티 검색
     public List<Party> findAll() {
@@ -78,15 +84,32 @@ public class PartyRepository {
                 .getResultList();
     }
 
+    // find PartyParticipant by Party/Member id
+    public List<PartyParticipant> findPartyParticipantByMember(Long pId, Long mId) {
+        return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.joinedPartyCharacter.characterOwner.id = :mId", PartyParticipant.class)
+                .setParameter("pId", pId)
+                .setParameter("mId", mId)
+                .getResultList();
+    }
 
-    /*
-    LocalDateTime a = LocalDateTime.of(2017, 2, 13, 15, 56);
-    System.out.println(a.get(ChronoField.DAY_OF_WEEK));
-    System.out.println(a.get(ChronoField.DAY_OF_YEAR));
-    System.out.println(a.get(ChronoField.DAY_OF_MONTH));
-    System.out.println(a.get(ChronoField.HOUR_OF_DAY));
-    System.out.println(a.get(ChronoField.MINUTE_OF_DAY));
-     */
+    // find all participant of specific party
+    public List<PartyParticipant> findAllParticipant(Long pId) {
+        return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId", PartyParticipant.class)
+                .setParameter("pId", pId)
+                .getResultList();
+    }
+
+    // find all party participant based on status
+    public List<PartyParticipant> findPartyParticipantWithStatus(Long pId, ParticipantStatus status) {
+        return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.participantStatus = :status", PartyParticipant.class)
+                .setParameter("pId", pId)
+                .setParameter("status", status)
+                .getResultList();
+    }
+
+
+
+
 
     //SELECT * FROM movie.ticket t where valid_time <= SYSDATE();
 
