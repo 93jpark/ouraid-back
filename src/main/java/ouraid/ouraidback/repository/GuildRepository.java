@@ -60,9 +60,11 @@ public class GuildRepository {
 
     // 길드멤버
     public List<GuildMember> findGuildMember(Long gId, Long mId) {
-        return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId ")
+        return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId", GuildMember.class)
                 .setParameter("gId", gId)
                 .setParameter("mId", mId)
                 .getResultList();
     }
+
+
 }
