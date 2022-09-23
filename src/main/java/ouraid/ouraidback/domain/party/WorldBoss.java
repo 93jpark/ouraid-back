@@ -124,7 +124,16 @@ public class WorldBoss extends Party {
     // 파티 참가원 추가
     public void addPartyCharacter(PartyParticipant pp) {
         this.getPartyParticipants().add(pp);
-        this.registeredMemberSize++;
+    }
+
+    // 파티 참가원 승인
+    public void acceptParticipant() {
+        this.acceptedMemberSize++;
+    }
+
+    // 파티 참가원 추방
+    public void repelAcceptedMember() {
+        this.acceptedMemberSize--;
     }
 
 }

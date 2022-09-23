@@ -119,6 +119,6 @@ public class Dungeon extends Party {
     // 파티 참가원 추가
     public void addPartyCharacter(PartyParticipant pp) {
         this.getPartyParticipants().add(pp);
-        this.registeredMemberSize++;
+        this.acceptedMemberSize++;
     }
 }

@@ -5,10 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Member;
+import ouraid.ouraidback.domain.enums.ParticipantStatus;
 import ouraid.ouraidback.domain.enums.ParticipantType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import static ouraid.ouraidback.domain.enums.ParticipantStatus.WAIT;
 
 @Entity
 @Getter
@@ -27,6 +30,9 @@ public class PartyParticipant {
     @ManyToOne @JoinColumn(name = "character_id") @NotNull
     private Characters joinedPartyCharacter;
 
+    @Enumerated(EnumType.STRING) @NotNull
+    private ParticipantStatus participantStatus;
+
     @Enumerated(EnumType.STRING) @NotNull //
     private ParticipantType participantType; // DRIVER, RIDER, NORMAL
 
@@ -35,6 +41,7 @@ public class PartyParticipant {
         pp.joinedParty = joinedParty;
         pp.joinedPartyMember = partyMember;
         pp.joinedPartyCharacter = character;
+        pp.participantStatus = WAIT;
         return pp;
     }
 
@@ -44,6 +51,7 @@ public class PartyParticipant {
         pp.joinedPartyMember = partyMember;
         pp.joinedPartyCharacter = character;
         pp.participantType = type;
+        pp.participantStatus = WAIT;
         return pp;
     }
 
@@ -52,5 +60,7 @@ public class PartyParticipant {
         this.participantType = type;
     }
 
+    // 파티원 상태 변경
+    public void updateStatus(ParticipantStatus status) { this.participantStatus = status; };
 
 }

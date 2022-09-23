@@ -97,7 +97,7 @@ public class HardLotus extends Party {
         return party;
     }
 
-    /*
+
     // 업둥이 정원 수정
     public void designateFreeRiderCapacity(int capacity) {
         this.freeRiderCapacity = capacity;
@@ -126,8 +126,16 @@ public class HardLotus extends Party {
     // 파티 참가원 추가
     public void addPartyCharacter(PartyParticipant pp) {
         this.getPartyParticipants().add(pp);
-        this.registeredMemberSize++;
     }
 
-     */
+    // 파티 참가원 승인
+    public void acceptParticipant() {
+        this.acceptedMemberSize++;
+    }
+
+    // 파티 참가원 추방
+    public void repelAcceptedMember() {
+        this.acceptedMemberSize--;
+    }
+
 }
