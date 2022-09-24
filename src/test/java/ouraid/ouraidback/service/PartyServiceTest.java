@@ -21,7 +21,9 @@ import java.time.LocalDateTime;
 import java.time.Instant;
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static ouraid.ouraidback.domain.enums.ParticipantStatus.*;
 import static ouraid.ouraidback.domain.enums.RecruitType.OPEN;
 import static ouraid.ouraidback.domain.enums.Server.SHUSIA;
 
@@ -156,7 +158,39 @@ public class PartyServiceTest {
     }
 
     @Test
-    public void 파티_참여자_검색() throws Exception {
+    public void 파티삭제_잔여참여자_삭제확인() throws Exception {
+        //given
+        Member member = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(member);
+
+        Characters character = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
+        characterService.registerCharacter(character);
+
+        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        partyService.registerParty(nlParty);
+
+        Member newMember = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(newMember);
+
+        Characters newChar = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
+        characterService.registerCharacter(newChar);
+
+        partyService.joinCharacterOnParty(nlParty.getId(), newChar.getId());
+
+        // when
+        partyService.removeParty(nlParty);
+
+        // then
+        Assert.assertEquals(0, partyService.findAllParticipant(nlParty.getId()).size());
+        Characters findChar = characterService.findOne(character.getId());
+        Member findMember = memberService.findMemberById(member.getId());
+        Assert.assertEquals("유니츠", findChar.getName());
+        Assert.assertEquals("유니츠", findMember.getNickname());
+
+    }
+
+    @Test
+    public void 파티_대기_참여자_검색() throws Exception {
         //given
         Member member = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
         memberService.registerMember(member);
@@ -178,10 +212,13 @@ public class PartyServiceTest {
 
         //then
         Assert.assertEquals(1, partyService.findPartyParticipant(wParty.getId(), newChar.getId()).size());
+        Assert.assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), WAIT).size());
+        Assert.assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), HOLDER).size());
+
     }
 
-    @Test(expected = Exception.class)
-    public void 멤버_중복캐릭_참여() throws Exception {
+    @Test
+    public void 한멤버_중복대기캐릭_참여() throws Exception {
         Member member = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
         memberService.registerMember(member);
         Characters character = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
@@ -189,23 +226,154 @@ public class PartyServiceTest {
 
         Member newMember = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
         memberService.registerMember(newMember);
+
         Characters newChar = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
         characterService.registerCharacter(newChar);
 
-        Characters otherChar = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
+        Characters otherChar = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
         characterService.registerCharacter(otherChar);
 
         Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
         partyService.registerParty(wParty);
 
         //when
-        PartyParticipant pp = PartyParticipant.createPartyParticipant(wParty, newMember, newChar);
         partyService.joinCharacterOnParty(wParty.getId(), newChar.getId());
         partyService.joinCharacterOnParty(wParty.getId(), otherChar.getId());
 
         //then
-        //Assert.assertEquals(1, partyService.findPartyParticipant(wParty.getId(), newChar.getId()).size());
-        fail("duplicated member's character registered");
+        assertEquals(3, partyService.findAllParticipant(wParty.getId()).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), HOLDER).size());
+        assertEquals(2, partyService.findPartyParticipantWithStatus(wParty.getId(), WAIT).size());
+
     }
+
+    @Test(expected = Exception.class)
+    public void 한멤버_중복캐릭_승인() throws Exception {
+        Member member = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(member);
+        Characters character = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
+        characterService.registerCharacter(character);
+
+        Member newMember = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(newMember);
+
+        Characters newChar = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
+        characterService.registerCharacter(newChar);
+
+        Characters otherChar = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
+        characterService.registerCharacter(otherChar);
+
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
+        partyService.registerParty(wParty);
+
+        //when
+        partyService.joinCharacterOnParty(wParty.getId(), newChar.getId());
+        partyService.joinCharacterOnParty(wParty.getId(), otherChar.getId());
+
+        PartyParticipant accept = partyService.findPartyParticipant(wParty.getId(), newChar.getId()).get(0);
+        partyService.acceptParticipant(accept.getId());
+
+        PartyParticipant accept2 = partyService.findPartyParticipant(wParty.getId(), otherChar.getId()).get(0);
+        partyService.acceptParticipant(accept2.getId());
+
+        //then
+        fail("duplicated member's character has been accepted on one party");
+
+    }
+
+    @Test
+    public void 파티_참여자_승인_거절() throws Exception {
+        Member member = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(member);
+        Characters character = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
+        characterService.registerCharacter(character);
+
+        Member newMember = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(newMember);
+
+        Characters newChar = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
+        characterService.registerCharacter(newChar);
+
+        Characters otherChar = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
+        characterService.registerCharacter(otherChar);
+
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
+        partyService.registerParty(wParty);
+
+        //when
+        partyService.joinCharacterOnParty(wParty.getId(), newChar.getId());
+        partyService.joinCharacterOnParty(wParty.getId(), otherChar.getId());
+
+        PartyParticipant accept = partyService.findPartyParticipant(wParty.getId(), newChar.getId()).get(0);
+        partyService.acceptParticipant(accept.getId());
+
+        PartyParticipant repel = partyService.findPartyParticipant(wParty.getId(), otherChar.getId()).get(0);
+        partyService.repelParticipant(repel.getId());
+
+        //then
+        assertEquals(3, partyService.findAllParticipant(wParty.getId()).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), HOLDER).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), ACCEPTED).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), DECLINED).size());
+
+    }
+
+    @Test(expected = Exception.class)
+    public void 파티_참여자_승인_초과() throws Exception {
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
+
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charA);
+
+        Member memberB = Member.create("블링벨", "bling@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberB);
+
+        Characters charB = Characters.create(SHUSIA, "블링블루", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberB);
+        characterService.registerCharacter(charB);
+
+        Member memberC = Member.create("아이리", "i-ri@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberC);
+
+        Characters charC = Characters.create(SHUSIA, "아이리크루", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberB);
+        characterService.registerCharacter(charC);
+
+
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now());
+        partyService.registerParty(wParty);
+
+        //when
+        partyService.joinCharacterOnParty(wParty.getId(), charA.getId());
+        partyService.joinCharacterOnParty(wParty.getId(), charB.getId());
+        partyService.joinCharacterOnParty(wParty.getId(), charC.getId());
+
+        PartyParticipant accept = partyService.findPartyParticipant(wParty.getId(), charA.getId()).get(0);
+        partyService.acceptParticipant(accept.getId());
+
+        PartyParticipant accept2 = partyService.findPartyParticipant(wParty.getId(), charB.getId()).get(0);
+        partyService.acceptParticipant(accept2.getId());
+
+        PartyParticipant accept3 = partyService.findPartyParticipant(wParty.getId(), charC.getId()).get(0);
+        partyService.acceptParticipant(accept3.getId());
+
+
+
+        //then
+        assertEquals(3, partyService.findAllParticipant(wParty.getId()).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), HOLDER).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), ACCEPTED).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(wParty.getId(), DECLINED).size());
+
+    }
+
+
+
+
+
 
 }
