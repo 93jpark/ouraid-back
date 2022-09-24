@@ -36,7 +36,7 @@ public class Dungeon extends Party {
      * @param reservedTime
      * @return
      */
-    public static Party createDungeonParty(RecruitType recruitType,
+    public static Dungeon createDungeonParty(RecruitType recruitType,
                                     Server server,
                                     Member partyHolderMember,
                                     Characters partyHolderCharacter,
@@ -68,15 +68,16 @@ public class Dungeon extends Party {
      * @param reservedTime
      * @return
      */
-    public static Party createDungeonParty(
+    public static Dungeon createDungeonParty(
             RecruitType recruitType,
-            PartyType partyType,
             Server server,
             Member partyHolderMember,
             Characters partyHolderCharacter,
+            Instant reservedTime,
+            PartyType partyType,
             int freeRiderCapacity,
-            double minAbility,
-            Instant reservedTime)
+            double minAbility
+            )
     {
         Dungeon party = new Dungeon();
         party.recruitType = recruitType;

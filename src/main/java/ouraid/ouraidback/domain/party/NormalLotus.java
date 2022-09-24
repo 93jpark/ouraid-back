@@ -28,20 +28,12 @@ public class NormalLotus extends Party {
 
     private int partyCapacity = 6;
 
-    /**
-     * Default party type is normal
-     * @param recruitType
-     * @param server
-     * @param partyHolderMember
-     * @param partyHolderCharacter
-     * @param reservedTime
-     * @return
-     */
-    public static Party createNormalLotusParty(RecruitType recruitType,
-                                    Server server,
-                                    Member partyHolderMember,
-                                    Characters partyHolderCharacter,
-                                    Instant reservedTime)
+    public static NormalLotus createNormalLotusParty(
+            RecruitType recruitType,
+            Server server,
+            Member partyHolderMember,
+            Characters partyHolderCharacter,
+            Instant reservedTime)
     {
         NormalLotus party = new NormalLotus();
         party.recruitType = recruitType;
@@ -69,15 +61,16 @@ public class NormalLotus extends Party {
      * @param reservedTime
      * @return
      */
-    public static Party createNormalLotusParty(
+    public static NormalLotus createNormalLotusParty(
             RecruitType recruitType,
-            PartyType partyType,
             Server server,
             Member partyHolderMember,
             Characters partyHolderCharacter,
+            Instant reservedTime,
+            PartyType partyType,
             int freeRiderCapacity,
-            double minAbility,
-            Instant reservedTime)
+            double minAbility
+    )
     {
         NormalLotus party = new NormalLotus();
         party.recruitType = recruitType;
@@ -90,6 +83,7 @@ public class NormalLotus extends Party {
         party.minAbility = BigDecimal.valueOf(minAbility);
         party.reservedTime = reservedTime;
         party.createdTime = Instant.now();
+
         return party;
     }
 

@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import static ouraid.ouraidback.domain.enums.ParticipantStatus.WAIT;
+import static ouraid.ouraidback.domain.enums.ParticipantType.NORMAL;
 
 @Entity
 @Getter
@@ -42,6 +43,7 @@ public class PartyParticipant {
         pp.joinedPartyMember = partyMember;
         pp.joinedPartyCharacter = character;
         pp.participantStatus = WAIT;
+        pp.participantType = NORMAL;
         return pp;
     }
 

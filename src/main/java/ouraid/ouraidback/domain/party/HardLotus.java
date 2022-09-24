@@ -40,11 +40,12 @@ public class HardLotus extends Party {
      * @param reservedTime
      * @return
      */
-    public static Party createHardLotusParty(RecruitType recruitType,
-                                      Server server,
-                                      Member partyHolderMember,
-                                      Characters partyHolderCharacter,
-                                      Instant reservedTime)
+    public static HardLotus createHardLotusParty(
+            RecruitType recruitType,
+            Server server,
+            Member partyHolderMember,
+            Characters partyHolderCharacter,
+            Instant reservedTime)
     {
         HardLotus party = new HardLotus();
         party.recruitType = recruitType;
@@ -72,15 +73,16 @@ public class HardLotus extends Party {
      * @param reservedTime
      * @return
      */
-    public static Party createHardLotusParty(
+    public static HardLotus createHardLotusParty(
             RecruitType recruitType,
-            PartyType partyType,
             Server server,
             Member partyHolderMember,
             Characters partyHolderCharacter,
+            Instant reservedTime,
+            PartyType partyType,
             int freeRiderCapacity,
-            double minAbility,
-            Instant reservedTime)
+            double minAbility
+            )
     {
         HardLotus party = new HardLotus();
         party.recruitType = recruitType;
