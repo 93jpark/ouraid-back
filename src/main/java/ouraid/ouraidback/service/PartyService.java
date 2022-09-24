@@ -18,8 +18,7 @@ import java.util.List;
 
 import static ouraid.ouraidback.domain.enums.ParticipantStatus.ACCEPTED;
 import static ouraid.ouraidback.domain.enums.ParticipantStatus.DECLINED;
-import static ouraid.ouraidback.domain.enums.ParticipantType.HOLDER;
-import static ouraid.ouraidback.domain.enums.ParticipantType.NORMAL;
+import static ouraid.ouraidback.domain.enums.ParticipantType.*;
 import static ouraid.ouraidback.domain.enums.PartyStatus.*;
 import static ouraid.ouraidback.domain.enums.PartyType.ASSIST;
 
@@ -40,6 +39,15 @@ public class PartyService {
         pp.updateStatus(ParticipantStatus.HOLDER);
     }
 
+    // 업둥 파티 생성
+    @Transactional
+    public void registerAssistParty(Party party) throws Exception {
+        partyRepository.registerParty(party);
+        this.joinCharacterOnPartyWithType(party.getId(), party.getPartyHolderCharacter().getId(), DRIVER);
+        PartyParticipant pp = partyRepository.findPartyParticipant(party.getId(), party.getPartyHolderCharacter().getId()).get(0);
+        pp.updateStatus(ParticipantStatus.HOLDER);
+    }
+
     // 파티 삭제
     @Transactional
     public void removeParty(Party party) {
@@ -53,10 +61,9 @@ public class PartyService {
         Characters findChar = characterService.findOne(cId);
         Member charOwner = findChar.getCharacterOwner();
 
-        /** 이미 해당 멤버의 캐릭터가 참여되어있는지 확인 필요 */
-        if(partyRepository.findPartyParticipantByMember(pId, charOwner.getId()).isEmpty()) {
+        /** 이미 해당 캐릭터가 참여되어있는지 확인 필요 */
+        if(partyRepository.findPartyParticipant(findParty.getId(), findChar.getId()).isEmpty()) {
             PartyParticipant pp = PartyParticipant.createPartyParticipant(findParty, charOwner, findChar);
-            pp.designateType(NORMAL);
             findParty.addPartyCharacter(pp);
             partyRepository.registerPartyParticipant(pp);
         } else {
@@ -74,7 +81,7 @@ public class PartyService {
         Member charOwner = findChar.getCharacterOwner();
 
         /** 이미 해당 멤버의 캐릭터가 참여되어있는지 확인 필요 */
-        if(partyRepository.findPartyParticipantByMember(pId, charOwner.getId()).isEmpty()) {
+        if(partyRepository.findPartyParticipant(findParty.getId(), findChar.getId()).isEmpty()) {
             PartyParticipant pp = PartyParticipant.createPartyParticipant(findParty, charOwner, findChar, type);
             findParty.addPartyCharacter(pp);
             partyRepository.registerPartyParticipant(pp);
@@ -89,8 +96,16 @@ public class PartyService {
     public void acceptParticipant(Long ppId) throws Exception {
         PartyParticipant pp = partyRepository.findOneParticipant(ppId);
         Party party = pp.getJoinedParty();
+        if(!partyRepository.findPartyParticipantByMemberWithStatus(party.getId(), pp.getJoinedPartyMember().getId(), ACCEPTED).isEmpty()) {
+            throw new Exception(pp.getJoinedPartyMember().getNickname()+"'s character is already accepted");
+        }
+
+        // 이미 승인된 경우
+        if(pp.getParticipantStatus() == ACCEPTED) {
+            throw new Exception(pp.getJoinedPartyCharacter().getName()+ "is already accepted");
+        }
         // 파티에 빈 자리가 있는 경우에만 승이
-        if(validateJoinable(party) && party.getPartyStatus() != FULL && party.getPartyStatus() != COMPLETE) {
+        else if(validateJoinable(party) && party.getPartyStatus() != FULL && party.getPartyStatus() != COMPLETE) {
             party.acceptParticipant();
             pp.updateStatus(ACCEPTED);
         } else {
@@ -105,14 +120,19 @@ public class PartyService {
 
     // 특정 파티의 파티원 가입 거절
     @Transactional
-    public void declineParticipant(Long ppId) throws Exception {
+    public void repelParticipant(Long ppId) throws Exception {
         PartyParticipant pp = partyRepository.findOneParticipant(ppId);
         Party party = pp.getJoinedParty();
-        if(party.getPartyStatus() != COMPLETE) {
+        // 이미 거절된 경우
+        if(pp.getParticipantStatus() == DECLINED) {
+            throw new Exception(pp.getJoinedPartyCharacter().getName()+ "is already accepted");
+        } // 이미 파티가 클리어된 경우, 참가자 상태 변경 불가
+        else if(party.getPartyStatus() != COMPLETE) {
             // 승인되었던 유저라면 파티 잔존인원 수정
             if(pp.getParticipantStatus()==ACCEPTED) {
                 party.repelAcceptedMember();
             }
+            // 승인된 유저로 가득 찼다면, 빠진 인원으로 인해 파티 구인 상태 변경
             if(party.getPartyStatus() == FULL) {
                 party.updatePartyStatus(RECRUIT);
             }
@@ -121,8 +141,6 @@ public class PartyService {
             log.info("{} party is already cleared", party.getId());
             throw new Exception("Already cleared party.");
         }
-
-
     }
 
 
@@ -225,5 +243,10 @@ public class PartyService {
         return partyRepository.findPartyParticipantWithStatus(pId, status);
     }
 
+
+    // find all participants of specific type on specific party
+    public List<PartyParticipant> findPartyParticipantWithType(Long pId, ParticipantType type) {
+        return partyRepository.findPartyParticipantWithType(pId, type);
+    }
 
 }
