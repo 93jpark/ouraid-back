@@ -11,10 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Member;
-import ouraid.ouraidback.domain.enums.MainClass;
-import ouraid.ouraidback.domain.enums.RecruitType;
-import ouraid.ouraidback.domain.enums.Server;
-import ouraid.ouraidback.domain.enums.SubClass;
+import ouraid.ouraidback.domain.enums.*;
 import ouraid.ouraidback.domain.party.*;
 
 import java.time.LocalDateTime;
@@ -24,6 +21,9 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static ouraid.ouraidback.domain.enums.ParticipantStatus.*;
+import static ouraid.ouraidback.domain.enums.ParticipantType.DRIVER;
+import static ouraid.ouraidback.domain.enums.ParticipantType.RIDER;
+import static ouraid.ouraidback.domain.enums.PartyType.ASSIST;
 import static ouraid.ouraidback.domain.enums.RecruitType.OPEN;
 import static ouraid.ouraidback.domain.enums.Server.SHUSIA;
 
@@ -46,7 +46,7 @@ public class PartyServiceTest {
         characterService.registerCharacter(character);
 
         //when
-        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        NormalLotus nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
         partyService.registerParty(nlParty);
         List<Party> partyList = partyService.findAllParty();
 
@@ -114,13 +114,13 @@ public class PartyServiceTest {
         characterService.registerCharacter(character);
 
         //when
-        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        NormalLotus nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
         partyService.registerParty(nlParty);
 
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        HardLotus hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, member, character, Instant.now());
         partyService.registerParty(hlParty);
 
-        Party dParty = Dungeon.createDungeonParty(OPEN, SHUSIA, member, character, Instant.now());
+        Dungeon dParty = Dungeon.createDungeonParty(OPEN, SHUSIA, member, character, Instant.now());
         partyService.registerParty(dParty);
 
 
@@ -371,7 +371,67 @@ public class PartyServiceTest {
 
     }
 
+    @Test
+    public void 업둥이_파티_생성_참여() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
 
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charA);
+
+        Characters charB = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charB);
+
+        //when
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), ASSIST, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        partyService.joinCharacterOnPartyWithType(hlParty.getId(), charA.getId(), RIDER);
+        partyService.joinCharacterOnPartyWithType(hlParty.getId(), charB.getId(), ParticipantType.NORMAL);
+
+        //then
+        assertEquals(3, partyService.findAllParticipant(hlParty.getId()).size());
+        assertEquals(1, partyService.findPartyParticipantWithStatus(hlParty.getId(), HOLDER).size());
+        assertEquals(1, partyService.findPartyParticipantWithType(hlParty.getId(), DRIVER).size());
+        assertEquals(1, partyService.findPartyParticipantWithType(hlParty.getId(), RIDER).size());
+
+    }
+
+    @Test(expected = Exception.class)
+    public void 업둥이_파티_생성_참여_초과() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
+
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charA);
+
+        Characters charB = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charB);
+
+        //when
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), ASSIST, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+        Long pp1 = partyService.joinCharacterOnPartyWithType(hlParty.getId(), charA.getId(), RIDER);
+        Long pp2 = partyService.joinCharacterOnPartyWithType(hlParty.getId(), charB.getId(), RIDER);
+
+        partyService.acceptParticipant(pp1);
+        partyService.acceptParticipant(pp2);
+
+        //then
+        fail("exceed free rider capacity");
+    }
 
 
 
