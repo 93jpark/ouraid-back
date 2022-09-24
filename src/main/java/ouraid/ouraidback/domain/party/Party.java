@@ -1,6 +1,7 @@
 package ouraid.ouraidback.domain.party;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Member;
@@ -11,6 +12,7 @@ import ouraid.ouraidback.domain.enums.Server;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Instant;
@@ -21,7 +23,7 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Getter
+@Getter @Slf4j
 @DiscriminatorColumn(name = "ptype")
 //@MappedSuperclass
 public class Party {
@@ -47,6 +49,9 @@ public class Party {
 
     // 파티 현 인원
     @NotNull protected int acceptedMemberSize = 0;
+
+    // 파티 현 업둥 인원
+    @Nullable protected int acceptedRiderSize;
 
     // 업둥이 정원
     @NotNull protected int freeRiderCapacity;
@@ -98,9 +103,12 @@ public class Party {
     }
 
     // 파티 참가원 추가
-    public void addPartyCharacter(PartyParticipant pp) {
+    public void addPartyParticiapnt(PartyParticipant pp) {
         this.getPartyParticipants().add(pp);
     }
+
+    // 파티 참가원 삭제
+    public void removePartyParticipant(PartyParticipant pp) { this.getPartyParticipants().remove(pp); }
 
     // 파티 참가원 승인
     public void acceptParticipant() {
@@ -108,7 +116,21 @@ public class Party {
     }
 
     // 파티 참가원 추방
-    public void repelAcceptedMember() {
+    public void repelAcceptedParticipant() {
         this.acceptedMemberSize--;
     }
+
+    // 파티원 중 라이더 추가
+    public void incRiderCharacterSize() {
+        this.acceptedRiderSize++;
+    }
+
+    // 파티원 중 라이더 추방
+    public void decRiderCharacterSize() {
+        if(this.acceptedRiderSize>1) {
+            this.acceptedRiderSize--;
+        }
+    }
+
+
 }

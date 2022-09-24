@@ -87,39 +87,40 @@ public class Dungeon extends Party {
         party.partyHolderMember = partyHolderMember;
         party.partyHolderCharacter = partyHolderCharacter;
         party.freeRiderCapacity = freeRiderCapacity;
+        party.acceptedRiderSize = 0;
         party.minAbility = BigDecimal.valueOf(minAbility);
         party.reservedTime = reservedTime;
         return party;
     }
+//
+//    // 업둥이 정원 수정
+//    public void designateFreeRiderCapacity(int capacity) {
+//        this.freeRiderCapacity = capacity;
+//    }
+//
+//    // 파티타입 수정
+//    public void updatePartyType(PartyType type) {
+//        this.partyType = type;
+//    }
+//
+//    // 모집타입 수정
+//    public void updateRecruitType(RecruitType type) {
+//        this.recruitType = type;
+//    }
+//
+//    // 최소항마컷 수정
+//    public void updateMinAbility(double ability) {
+//        this.minAbility = BigDecimal.valueOf(ability);
+//    }
+//
+//    // 파티예정시각 수정
+//    public void updateReservedTime(Instant time) {
+//        this.reservedTime = time;
+//    }
 
-    // 업둥이 정원 수정
-    public void designateFreeRiderCapacity(int capacity) {
-        this.freeRiderCapacity = capacity;
-    }
-
-    // 파티타입 수정
-    public void updatePartyType(PartyType type) {
-        this.partyType = type;
-    }
-
-    // 모집타입 수정
-    public void updateRecruitType(RecruitType type) {
-        this.recruitType = type;
-    }
-
-    // 최소항마컷 수정
-    public void updateMinAbility(double ability) {
-        this.minAbility = BigDecimal.valueOf(ability);
-    }
-
-    // 파티예정시각 수정
-    public void updateReservedTime(Instant time) {
-        this.reservedTime = time;
-    }
-
-    // 파티 참가원 추가
-    public void addPartyCharacter(PartyParticipant pp) {
-        this.getPartyParticipants().add(pp);
-        this.acceptedMemberSize++;
-    }
+//    // 파티 참가원 추가
+//    public void addPartyCharacter(PartyParticipant pp) {
+//        this.getPartyParticipants().add(pp);
+//        this.acceptedMemberSize++;
+//    }
 }
