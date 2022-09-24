@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ouraid.ouraidback.domain.enums.ParticipantStatus;
+import ouraid.ouraidback.domain.enums.ParticipantType;
 import ouraid.ouraidback.domain.enums.PartyStatus;
 import ouraid.ouraidback.domain.party.*;
 
@@ -107,6 +108,22 @@ public class PartyRepository {
                 .getResultList();
     }
 
+    public List<PartyParticipant> findPartyParticipantWithType(Long pId, ParticipantType type) {
+        return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.participantType = :type", PartyParticipant.class)
+                .setParameter("pId", pId)
+                .setParameter("type", type)
+                .getResultList();
+    }
+
+    // 한 파티의 등록된 멤버가 지닌 캐릭터들의 상태를 기반 검색
+    // 이미 ACCEPTED 캐릭이 있는 확인하기 위함
+    public List<PartyParticipant> findPartyParticipantByMemberWithStatus(Long pId, Long mId, ParticipantStatus status) {
+        return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.joinedPartyCharacter.characterOwner.id = :mId and pp.participantStatus = :status", PartyParticipant.class)
+                .setParameter("pId", pId)
+                .setParameter("mId", mId)
+                .setParameter("status", status)
+                .getResultList();
+    }
 
 
 
