@@ -47,10 +47,19 @@ public class GuildService {
 
     // 길드 정보 업데이트 - 이름, 마스터, 레벨
     @Transactional
-    public void changeGuildName(Long guildId, String newName) {
+    public void changeGuildName(Long guildId, String newName) throws Exception {
         /**
          * 중복검사필요
          */
+        Guild findGuild = guildRepository.findGuild(guildId);
+        try {
+            validateDuplicateGuild(findGuild);
+        } catch (Exception e) {
+            throw new Exception("Tried to chage guild name, but "+newName+" is already registered");
+        }
+        findGuild.changeGuildName(newName);
+
+
     }
 
     @Transactional
@@ -110,7 +119,7 @@ public class GuildService {
         // 해당 캐릭터가 탈퇴하면 소속 캐릭터의 수가 0인경우, 길드 멤버리스트에서 해당 멤버를 제거
         if(characterRepository.findCharactersByMemberWithGuild(findGuild.getName(), owner.getNickname()).size() <= 1) {
             owner.leaveJoinedGuild(gm);
-            //findGuild.leaveGuildByMember(owner);
+            em.remove(gm);
         }
 
         if(findChar.getJoinedGuild()!=null) {
@@ -196,13 +205,11 @@ public class GuildService {
     // 길드와 멤버 id 기반 GuildMember 검색
     @Transactional(readOnly = true)
     public List<GuildMember> findGuildMemberByGuildMember(Long gId, Long mId) {
-        return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId")
+        return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId", GuildMember.class)
                 .setParameter("gId", gId)
                 .setParameter("mId", mId)
                 .getResultList();
     }
-
-
 
     // 길드 이름 중복 조회
     @Transactional(readOnly = true)

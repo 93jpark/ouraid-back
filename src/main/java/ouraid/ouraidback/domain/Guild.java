@@ -77,6 +77,8 @@ public class Guild {
         this.guildCharacters.remove(character);
     }
 
+    // 길드명 변경
+    public void changeGuildName(String newName) { this.name = newName; }
 
     // 길드 마스터 변경
     public void changeGuildMaster(Member member) {

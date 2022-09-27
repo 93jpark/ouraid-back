@@ -25,6 +25,14 @@ public class GuildRepository {
         return gm.getGuildMemberId();
     }
 
+    public void removeGuild(Guild guild) {
+        em.remove(guild);
+    }
+
+    public void removeGuildMember(GuildMember gm) {
+        em.remove(gm);
+    }
+
     // 식별자를 통한 단일 길드 조회
     public Guild findGuild(Long id) { return em.find(Guild.class, id); }
 
