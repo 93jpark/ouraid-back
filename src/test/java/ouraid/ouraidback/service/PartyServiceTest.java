@@ -24,6 +24,7 @@ import static ouraid.ouraidback.domain.enums.ParticipantStatus.*;
 import static ouraid.ouraidback.domain.enums.ParticipantType.DRIVER;
 import static ouraid.ouraidback.domain.enums.ParticipantType.RIDER;
 import static ouraid.ouraidback.domain.enums.PartyType.ASSIST;
+import static ouraid.ouraidback.domain.enums.PartyType.NORMAL;
 import static ouraid.ouraidback.domain.enums.RecruitType.OPEN;
 import static ouraid.ouraidback.domain.enums.Server.SHUSIA;
 
@@ -433,7 +434,156 @@ public class PartyServiceTest {
         fail("exceed free rider capacity");
     }
 
+    @Test(expected = Exception.class)
+    public void 업둥아닌파티_업둥신청() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
 
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charA);
+
+        Characters charB = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charB);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        //when
+        partyService.joinCharacterOnPartyWithType(hlParty.getId(), charB.getId(), ParticipantType.NORMAL);
+        partyService.joinCharacterOnPartyWithType(hlParty.getId(), charA.getId(), RIDER);
+
+        //then
+        fail("RIDER join non-assist party.");
+
+    }
+
+    @Test(expected = Exception.class)
+    public void 업둥아닌파티_업둥신청2() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
+
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charA);
+
+        Characters charB = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charB);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        //when
+        Long p1 = partyService.joinCharacterOnPartyWithType(hlParty.getId(), charB.getId(), ParticipantType.NORMAL);
+        Long p2 = partyService.joinCharacterOnPartyWithType(hlParty.getId(), charA.getId(), RIDER);
+        partyService.acceptParticipant(p2);
+
+        //then
+        fail("RIDER join non-assist party.");
+
+    }
+
+    @Test(expected = Exception.class)
+    public void 항마컷_미만_검증() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
+
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.2, memberA);
+        characterService.registerCharacter(charA);
+
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        //when
+        Long p1 = partyService.joinCharacterOnParty(hlParty.getId(), charA.getId());
+        partyService.acceptParticipant(p1);
+
+
+        //then
+        fail("character which not satisfied required ability is accepted or joined");
+    }
+    
+    @Test
+    public void 항마컷_통과() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
+
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
+        characterService.registerCharacter(charA);
+
+        Member memberB = Member.create("블링벨", "blingbell@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberB);
+
+        Characters charB = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.9, memberB);
+        characterService.registerCharacter(charB);
+
+        Member memberC = Member.create("아이리", "iri@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberC);
+
+        Characters charC = Characters.create(SHUSIA, "톡쳐", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.81, memberC);
+        characterService.registerCharacter(charC);
+
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        //when
+        Long p1 = partyService.joinCharacterOnParty(hlParty.getId(), charA.getId());
+        Long p2 = partyService.joinCharacterOnParty(hlParty.getId(), charB.getId());
+        Long p3 = partyService.joinCharacterOnParty(hlParty.getId(), charC.getId());
+        partyService.acceptParticipant(p1);
+        partyService.acceptParticipant(p2);
+        partyService.acceptParticipant(p3);
+
+
+        //then
+        Assert.assertEquals(3, partyService.findPartyParticipantWithType(hlParty.getId(), ParticipantType.NORMAL).size());
+    }
+
+    @Test
+    public void 업둥파티_항마미만_통과() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
+
+        Member memberA = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
+        memberService.registerMember(memberA);
+
+        Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.2, memberA);
+        characterService.registerCharacter(charA);
+
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), ASSIST, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        //when
+        Long p1 = partyService.joinCharacterOnPartyWithType(hlParty.getId(), charA.getId(), RIDER);
+        partyService.acceptParticipant(p1);
+
+
+        //then
+        Assert.assertEquals(1, partyService.findPartyParticipantWithType(hlParty.getId(), RIDER).size());
+    }
 
 
 }
