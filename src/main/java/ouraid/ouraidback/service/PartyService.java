@@ -33,7 +33,6 @@ public class PartyService {
     // 파티 생성
     @Transactional
     public void registerParty(Party party) throws Exception {
-        log.info("PartyService:일반파티 등록");
         partyRepository.registerParty(party);
         this.joinCharacterOnPartyWithType(party.getId(), party.getPartyHolderCharacter().getId(), HOLDER);
         PartyParticipant pp = partyRepository.findPartyParticipant(party.getId(), party.getPartyHolderCharacter().getId()).get(0);
@@ -43,7 +42,6 @@ public class PartyService {
     // 업둥 파티 생성
     @Transactional
     public void registerAssistParty(Party party) throws Exception {
-        log.info("PartyService:업둥파티 등록");
         partyRepository.registerParty(party);
         this.joinCharacterOnPartyWithType(party.getId(), party.getPartyHolderCharacter().getId(), DRIVER);
         PartyParticipant pp = partyRepository.findPartyParticipant(party.getId(), party.getPartyHolderCharacter().getId()).get(0);
@@ -63,6 +61,12 @@ public class PartyService {
         Characters findChar = characterService.findOne(cId);
         Member charOwner = findChar.getCharacterOwner();
 
+        if(!findParty.getPartyType().equals(ASSIST)) {
+            if(!validateAbility(findParty, findChar)) {
+                throw new Exception("character's ability is not enough to satisfy required party minimum ability.");
+            }
+        }
+
         /** 이미 해당 캐릭터가 참여되어있는지 확인 필요 */
         if(partyRepository.findPartyParticipant(findParty.getId(), findChar.getId()).isEmpty()) {
             PartyParticipant pp = PartyParticipant.createPartyParticipant(findParty, charOwner, findChar);
@@ -70,7 +74,6 @@ public class PartyService {
             partyRepository.registerPartyParticipant(pp);
             return pp.getId();
         } else {
-            log.info("{} party already other character who has Member'{}'.", findParty.getId(), charOwner.getNickname());
             throw new Exception("Duplicated character registered");
         }
     }
@@ -83,6 +86,21 @@ public class PartyService {
         Characters findChar = characterService.findOne(cId);
         Member charOwner = findChar.getCharacterOwner();
 
+        if(type == RIDER) {
+            if(!findParty.getPartyType().equals(ASSIST)) {
+                throw new Exception("non-assist party cannot take rider character");
+            }
+
+            if(!validateRiderJoinable(findParty)) {
+                throw new Exception("party's rider capacity is full.");
+            }
+        }
+        if(!findParty.getPartyType().equals(ASSIST)) {
+            if(!validateAbility(findParty, findChar)) {
+                throw new Exception("character's ability is not enough to satisfy required party minimum ability.");
+            }
+        }
+
         /** 이미 해당 멤버의 캐릭터가 참여되어있는지 확인 필요 */
         if(partyRepository.findPartyParticipant(findParty.getId(), findChar.getId()).isEmpty()) {
             PartyParticipant pp = PartyParticipant.createPartyParticipant(findParty, charOwner, findChar, type);
@@ -90,7 +108,6 @@ public class PartyService {
             partyRepository.registerPartyParticipant(pp);
             return pp.getId();
         } else {
-            log.info("{} party already other character who has Member'{}'.", findParty.getId(), charOwner.getNickname());
             throw new Exception("Duplicated character registered");
         }
 
@@ -102,49 +119,50 @@ public class PartyService {
         PartyParticipant pp = partyRepository.findOneParticipant(ppId);
         Party party = pp.getJoinedParty();
 
-        log.info("PartyService:acceptParticipant executed");
+        // ASSIST파티가 아닌데, 라이더 참가자가 신청하는 경우
+        if( !party.getPartyType().equals(ASSIST) && pp.getParticipantType().equals(RIDER)) {
+            throw new Exception("non-assist party can't take RIDER character");
+        }
+
+        // ASSIST파티가 아닌 경우, 항마력 체크 패스
+        if(!party.getPartyType().equals(ASSIST)) {
+            if(!validateAbility(party, pp.getJoinedPartyCharacter())) {
+                throw new Exception("character's ability is not enough to satisfy required party minimum ability.");
+            }
+        }
+
         // 이미 같은 멤버의 캐릭터가 등록된 경우
         if(!partyRepository.findPartyParticipantByMemberWithStatus(party.getId(), pp.getJoinedPartyMember().getId(), ACCEPTED).isEmpty()) {
-            log.info("PartyService:같은 멤버의 중첩 캐릭 검증 - 중첩캐치");
             throw new Exception(pp.getJoinedPartyMember().getNickname()+"'s character is already accepted");
         }
         // ASSIT 파티가 아닌데, 참여자의 상태가 RIDER인 경우
         if(pp.getParticipantType() == RIDER && party.getPartyType() != ASSIST) {
-            log.info("PartyService:업둥팟 아닌데 라이더 지원 검증");
             throw new Exception(party.getId()+" party doesn't accept RIDER");
         }
         // 이미 승인된 경우
         if(pp.getParticipantStatus() == ACCEPTED) {
-            log.info("PartyService:이미 승인된 경우 검증");
             throw new Exception(pp.getJoinedPartyCharacter().getName()+ "is already accepted");
         }
         // 파티에 빈 자리가 있는 경우에만 승인
         if(!validateJoinable(party)) {
-            log.info("PartyService:파티 빈자리 없음 검증");
             throw new Exception(party.getId()+" is alrady full");
         }
         // 클리어되지않았고,파티구인의 상태가 만원이 아닌경우
         if(party.getPartyStatus() != FULL && party.getPartyStatus() != COMPLETE) {
-            log.info("PartyService:빈방이고 클리어안된 가입가능한 방");
             if(pp.getParticipantType()==RIDER) {
-                log.info("PartyService:지원자가 라이더임");
                 if(!validateRiderJoinable(party)) {
-                    log.info("PartyService:라이더 가득참");
                     throw new Exception("rider capacity is full now");
                 } else {
-                    log.info("PartyService:라이더 가득안참 - 라이더 수용");
                     party.incRiderCharacterSize();
                     party.acceptParticipant();
                     pp.updateStatus(ACCEPTED);
                 }
             } else {
-                log.info("PartyService:라이더가 아닌 일반 가입 처리");
                 party.acceptParticipant();
                 pp.updateStatus(ACCEPTED);
             }
 
         } else {
-            log.info("PartyService:이미 클리어되었거나 풀방인 경우");
             throw new Exception(party.getId()+" party is already full");
         }
         // 파티가 가득 찼다면, 파티 상태 변경
@@ -178,19 +196,18 @@ public class PartyService {
             }
             pp.updateStatus(DECLINED);
         } else {
-            log.info("{} party is already cleared", party.getId());
             throw new Exception("Already cleared party.");
         }
     }
 
     //
     private boolean validateRiderJoinable(Party findParty) {
-        return findParty.getAcceptedRiderSize() >= findParty.getFreeRiderCapacity();
+        return findParty.getAcceptedRiderSize() < findParty.getFreeRiderCapacity() ? true : false;
     }
 
     // 항마컷 제한 확인
     private boolean validateAbility(Party findParty, Characters findChar) {
-        return findParty.getMinAbility().compareTo(findChar.getAbility()) < 0 ? true : false;
+        return findParty.getMinAbility().compareTo(findChar.getAbility()) <= 0 ? true : false;
     }
 
     private boolean validateJoinable(Party findParty) {
