@@ -37,7 +37,7 @@ public class Member {
 
     @OneToMany(mappedBy = "guildMaster", cascade = PERSIST) @Nullable private List<Guild> ownGuilds = new ArrayList<>();
 
-    @OneToMany(mappedBy="guild", cascade = ALL) @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
+    @OneToMany(mappedBy="guild", cascade = ALL, orphanRemoval = true) @Nullable private List<GuildMember> joinedGuilds = new ArrayList<>();
 
     // 소유캐릭 삭제 시 캐릭 엔티티 삭제
     @OneToMany(mappedBy = "characterOwner", cascade = ALL, orphanRemoval = true) private List<Characters> ownCharacters = new ArrayList<>();

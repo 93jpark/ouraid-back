@@ -12,6 +12,7 @@ import ouraid.ouraidback.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,7 +34,15 @@ public class GuildService {
     @Transactional
     public Long registerGuild(Guild guild) {
         validateDuplicateGuild(guild);
-        return guildRepository.register(guild);
+        GuildMember.createGuildMember(guild, guild.getGuildMaster());
+        return guildRepository.registerGuild(guild);
+    }
+
+    // 길드 멤버 관계 생성
+    @Transactional
+    public Long registerGuildMember(Long gId, Long mId) {
+        Guild findGuild = guildRepository.findGuild(gId);
+        return guildRepository.findGuildMember(gId, mId).get(0).getGuildMemberId();
     }
 
     // 길드 정보 업데이트 - 이름, 마스터, 레벨
@@ -46,8 +55,8 @@ public class GuildService {
 
     @Transactional
     public void changeGuildMaster(Long guildId, Long newMasterId) {
-        Guild findGuild = guildRepository.findOne(guildId);
-        Member newMaster = memberRepository.findOne(newMasterId);
+        Guild findGuild = guildRepository.findGuild(guildId);
+        Member newMaster = memberRepository.findMember(newMasterId);
         findGuild.changeGuildMaster(newMaster);
         em.clear();
         em.flush();
@@ -56,7 +65,7 @@ public class GuildService {
     // 길드 레벨 수정
     @Transactional
     public void updateGuildLevel(Long guildId, Integer newLevel) {
-        Guild findGuild = guildRepository.findOne(guildId);
+        Guild findGuild = guildRepository.findGuild(guildId);
         findGuild.updateGuildLevel(newLevel);
         em.clear();
         em.flush();
@@ -66,13 +75,14 @@ public class GuildService {
     public void joinNewCharacter(Long guildId, Long characterId) {
         Characters newChar = characterRepository.findOne(characterId);
         Member owner = newChar.getCharacterOwner();
-        Guild guild = guildRepository.findOne(guildId);
+        Guild guild = guildRepository.findGuild(guildId);
         Community gCom = guild.getJoinedCommunity();
         GuildMember gm = guildRepository.findByGuildMember(guild.getName(), owner.getNickname()).get(0);
 
         // 해당 길드에 특정 멤버가 최초로 가입하는 경우,
         if(gm==null) {
             //guild.joinGuildMember(owner);
+            gm.setJoinedDate(Instant.now());
             owner.addJoinedGuild(gm);
         }
 
@@ -91,7 +101,7 @@ public class GuildService {
 
     // 길드 캐릭터 탈퇴
     public void leaveCharacter(Long guildId, Long characterId) {
-        Guild findGuild = guildRepository.findOne(guildId);
+        Guild findGuild = guildRepository.findGuild(guildId);
         Characters findChar = characterRepository.findOne(characterId);
         Member owner = findChar.getCharacterOwner();
         Community joinedCommunity = findChar.getJoinedCommunity();
@@ -119,12 +129,13 @@ public class GuildService {
     // 길드 멤버 가입
     @Transactional
     public void joinGuildMember(Long guildId, Long memberId) {
-        Guild guild = guildRepository.findOne(guildId);
-        Member member = memberRepository.findOne(memberId);
+        Guild guild = guildRepository.findGuild(guildId);
+        Member member = memberRepository.findMember(memberId);
 
         GuildMember gm = GuildMember.createGuildMember(guild, member);
 
         if(guildRepository.findGuildMember(guildId, memberId).isEmpty()) {
+            gm.setJoinedDate(Instant.now());
             member.addJoinedGuild(gm);
         }
     }
@@ -133,9 +144,8 @@ public class GuildService {
     // 길드멤버 길드 탈퇴
     @Transactional
     public void leaveGuildMember(Long guildId, Long memberId) {
-        Guild guild = guildRepository.findOne(guildId);
-        Member member = memberRepository.findOne(memberId);
-        //GuildMember gm = GuildMember.createGuildMember(guild, member);
+        Guild guild = guildRepository.findGuild(guildId);
+        Member member = memberRepository.findMember(memberId);
         GuildMember gm = guildRepository.findGuildMember(guildId, memberId).get(0);
 
         if (guild!=null) {
@@ -169,7 +179,7 @@ public class GuildService {
 
     // 길드 ID로 길드 단건 조회
     @Transactional(readOnly = true)
-    public Guild findById(Long id) { return guildRepository.findOne(id); }
+    public Guild findById(Long id) { return guildRepository.findGuild(id); }
 
     // 길드 이름 조회
     @Transactional(readOnly = true)

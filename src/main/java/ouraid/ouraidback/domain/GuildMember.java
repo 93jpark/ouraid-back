@@ -3,10 +3,11 @@ package ouraid.ouraidback.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
@@ -27,7 +28,8 @@ public class GuildMember {
     @JoinColumn(name = "guild_id")
     private Guild guild;
 
-    private LocalDateTime joinedDate;
+    @NotNull
+    private Instant joinedDate;
 
     // 생성 메소드
     public static GuildMember createGuildMember(Guild guild, Member member) {
@@ -37,7 +39,7 @@ public class GuildMember {
         return guildMember;
     }
 
-    public void setJoinedDate(LocalDateTime time) {
+    public void setJoinedDate(Instant time) {
         this.joinedDate = time;
     }
 }

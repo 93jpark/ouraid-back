@@ -15,13 +15,21 @@ public class GuildRepository {
 
     private final EntityManager em;
 
-    public Long register(Guild guild) {
+    public Long registerGuild(Guild guild) {
         em.persist(guild);
         return guild.getId();
     }
 
+    public Long registerGuildMember(GuildMember gm) {
+        em.persist(gm);
+        return gm.getGuildMemberId();
+    }
+
     // 식별자를 통한 단일 길드 조회
-    public Guild findOne(Long id) { return em.find(Guild.class, id); }
+    public Guild findGuild(Long id) { return em.find(Guild.class, id); }
+
+    // 식별자를 통한 단일 길드-멤버 조회
+    public GuildMember findGuildMember(Long id) { return em.find(GuildMember.class, id); }
 
     // 모든 길드 조회
     public List<Guild> findAll() {

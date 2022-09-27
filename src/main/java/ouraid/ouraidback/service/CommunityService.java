@@ -72,7 +72,7 @@ public class CommunityService {
     @Transactional
     public void addMember(Long comId, Long memberId) {
         Community findCom = communityRepository.findOne(comId);
-        Member findMember = memberRepository.findOne(memberId);
+        Member findMember = memberRepository.findMember(memberId);
         findCom.addJoinedMember(findMember);
         findMember.setJoinedCommunity(findCom);
     }
@@ -80,7 +80,7 @@ public class CommunityService {
     // 연합 길드 추가
     @Transactional
     public void addGuild(Long comId, Long gId) {
-        Guild findGuild = guildRepository.findOne(gId);
+        Guild findGuild = guildRepository.findGuild(gId);
         Community findCom = communityRepository.findOne(comId);
 
         findCom.addJoinedGuild(findGuild);

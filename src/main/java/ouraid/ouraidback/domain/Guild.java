@@ -30,7 +30,7 @@ public class Guild {
 
     @ManyToOne(fetch = LAZY) @JoinColumn(name = "member_id") @NotNull private Member guildMaster;
 
-    @OneToMany(mappedBy="member", cascade = ALL) private List<GuildMember> guildMembers = new ArrayList<>();
+    @OneToMany(mappedBy="member", cascade = ALL, orphanRemoval = true) private List<GuildMember> guildMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "joinedGuild", cascade = PERSIST) private List<Characters> guildCharacters = new ArrayList<>();
 

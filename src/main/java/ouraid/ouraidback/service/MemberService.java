@@ -51,7 +51,7 @@ public class MemberService {
     public void updateMemberNickname(Long memberId, String newName) {
         try {
             validateDuplicatedMember(newName);
-            Member member = memberRepository.findOne(memberId);
+            Member member = memberRepository.findMember(memberId);
             member.updateMemberNickname(newName);
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -61,7 +61,7 @@ public class MemberService {
     @Transactional
     public void changeMemberPassword(Long memberId, String newPassword) {
         try {
-            Member findMember = memberRepository.findOne(memberId);
+            Member findMember = memberRepository.findMember(memberId);
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -82,7 +82,7 @@ public class MemberService {
     public List<Member> findAllMembers() { return memberRepository.findAll(); }
 
     @Transactional(readOnly = true) // id 기반
-    public Member findMemberById(Long memberId) { return memberRepository.findOne(memberId); }
+    public Member findMemberById(Long memberId) { return memberRepository.findMember(memberId); }
 
     @Transactional(readOnly = true) // 닉네임 기반
     public List<Member> findMemberByName(String name) { return memberRepository.findByNickname(name); }
