@@ -5,15 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Member;
-import ouraid.ouraidback.domain.enums.PartyStatus;
 import ouraid.ouraidback.domain.enums.PartyType;
 import ouraid.ouraidback.domain.enums.RecruitType;
 import ouraid.ouraidback.domain.enums.Server;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Instant;
+import java.util.Date;
 
 import static ouraid.ouraidback.domain.enums.PartyStatus.RECRUIT;
 import static ouraid.ouraidback.domain.enums.PartyType.NORMAL;
@@ -33,7 +33,7 @@ public class NormalLotus extends Party {
             Server server,
             Member partyHolderMember,
             Characters partyHolderCharacter,
-            Instant reservedTime)
+            LocalDate reservedTime)
     {
         NormalLotus party = new NormalLotus();
         party.recruitType = recruitType;
@@ -43,7 +43,7 @@ public class NormalLotus extends Party {
         party.partyHolderMember = partyHolderMember;
         party.partyHolderCharacter = partyHolderCharacter;
         party.reservedTime = reservedTime;
-        party.createdTime = Instant.now();
+        party.createdTime = LocalDate.now();
         party.minAbility = BigDecimal.ZERO;
         party.freeRiderCapacity = 0;
         return party;
@@ -66,7 +66,7 @@ public class NormalLotus extends Party {
             Server server,
             Member partyHolderMember,
             Characters partyHolderCharacter,
-            Instant reservedTime,
+            LocalDate reservedTime,
             PartyType partyType,
             int freeRiderCapacity,
             double minAbility
@@ -83,49 +83,9 @@ public class NormalLotus extends Party {
         party.acceptedRiderSize = 0;
         party.minAbility = BigDecimal.valueOf(minAbility);
         party.reservedTime = reservedTime;
-        party.createdTime = Instant.now();
+        party.createdTime = LocalDate.now();
 
         return party;
     }
-//
-//    // 업둥이 정원 수정
-//    public void designateFreeRiderCapacity(int capacity) {
-//        this.freeRiderCapacity = capacity;
-//    }
-//
-//    // 파티타입 수정
-//    public void updatePartyType(PartyType type) {
-//        this.partyType = type;
-//    }
-//
-//    // 모집타입 수정
-//    public void updateRecruitType(RecruitType type) {
-//        this.recruitType = type;
-//    }
-//
-//    // 최소항마컷 수정
-//    public void updateMinAbility(double ability) {
-//        this.minAbility = BigDecimal.valueOf(ability);
-//    }
-//
-//    // 파티예정시각 수정
-//    public void updateReservedTime(Instant time) {
-//        this.reservedTime = time;
-//    }
-//
-//    // 파티 참가원 추가
-//    public void addPartyCharacter(PartyParticipant pp) {
-//        this.getPartyParticipants().add(pp);
-//    }
-//
-//    // 파티 참가원 승인
-//    public void acceptParticipant() {
-//        this.acceptedMemberSize++;
-//    }
-//
-//    // 파티 참가원 추방
-//    public void repelAcceptedMember() {
-//        this.acceptedMemberSize--;
-//    }
 
 }

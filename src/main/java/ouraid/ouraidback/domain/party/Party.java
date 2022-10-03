@@ -14,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Instant;
 import java.util.*;
@@ -45,7 +46,7 @@ public class Party {
     protected PartyStatus partyStatus;
 
     // 파티 정원
-    @NotNull protected int partyCapacity;
+    @Nullable protected int partyCapacity;
 
     // 파티 현 인원
     @NotNull protected int acceptedMemberSize = 0;
@@ -59,9 +60,11 @@ public class Party {
     // 최소 항마컷
     @Nullable protected BigDecimal minAbility;
 
-    @NotNull Instant reservedTime;
+    //@Temporal(TemporalType.TIMESTAMP)
+    LocalDate reservedTime;
 
-    @NotNull Instant createdTime;
+    //@Temporal(TemporalType.TIMESTAMP)
+    LocalDate createdTime = LocalDate.now();
 
     @ManyToOne(fetch = LAZY, cascade = PERSIST) @JoinColumn(name = "member_id") @NotNull
     protected Member partyHolderMember;
@@ -98,7 +101,7 @@ public class Party {
     }
 
     // 파티예정시각 수정
-    public void updateReservedTime(Instant time) {
+    public void updateReservedTime(LocalDate time) {
         this.reservedTime = time;
     }
 
