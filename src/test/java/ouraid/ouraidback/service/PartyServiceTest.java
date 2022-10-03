@@ -14,8 +14,14 @@ import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.*;
 import ouraid.ouraidback.domain.party.*;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -47,12 +53,12 @@ public class PartyServiceTest {
         characterService.registerCharacter(character);
 
         //when
-        NormalLotus nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        NormalLotus nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(nlParty);
         List<Party> partyList = partyService.findAllParty();
 
         //then
-        Assert.assertEquals(1, partyList.size());
+        Assert.assertEquals(2, partyList.size()); // init DB + 1
     }
 
     @Test
@@ -64,12 +70,12 @@ public class PartyServiceTest {
         characterService.registerCharacter(character);
 
         //when
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(hlParty);
         List<Party> partyList = partyService.findAllParty();
 
         //then
-        Assert.assertEquals(1, partyList.size());
+        Assert.assertEquals(2, partyList.size()); // init DB + 1
     }
 
     @Test
@@ -81,12 +87,12 @@ public class PartyServiceTest {
         characterService.registerCharacter(character);
 
         //when
-        Party dParty = Dungeon.createDungeonParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party dParty = Dungeon.createDungeonParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(dParty);
         List<Party> partyList = partyService.findAllParty();
 
         //then
-        Assert.assertEquals(1, partyList.size());
+        Assert.assertEquals(2, partyList.size()); // init DB + 1;
     }
 
     @Test
@@ -98,12 +104,12 @@ public class PartyServiceTest {
         characterService.registerCharacter(character);
 
         //when
-        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(wParty);
         List<Party> partyList = partyService.findAllParty();
 
         //then
-        Assert.assertEquals(1, partyList.size());
+        Assert.assertEquals(2, partyList.size()); // init DB + 1
     }
 
     @Test
@@ -115,20 +121,20 @@ public class PartyServiceTest {
         characterService.registerCharacter(character);
 
         //when
-        NormalLotus nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        NormalLotus nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(nlParty);
 
-        HardLotus hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        HardLotus hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(hlParty);
 
-        Dungeon dParty = Dungeon.createDungeonParty(OPEN, SHUSIA, member, character, Instant.now());
+        Dungeon dParty = Dungeon.createDungeonParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(dParty);
 
 
         List<Party> partyList = partyService.findAllParty();
 
         //then
-        Assert.assertEquals(3, partyList.size());
+        Assert.assertEquals(4, partyList.size()); // init DB + 1
     }
 
     @Test//(expected = NullPointerException.class)
@@ -138,7 +144,7 @@ public class PartyServiceTest {
         memberService.registerMember(member);
         Characters character = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
         characterService.registerCharacter(character);
-        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(nlParty);
 
         // when
@@ -167,7 +173,7 @@ public class PartyServiceTest {
         Characters character = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, member);
         characterService.registerCharacter(character);
 
-        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(nlParty);
 
         Member newMember = Member.create("바우", "bau@gmail.com", "123", SHUSIA);
@@ -203,7 +209,7 @@ public class PartyServiceTest {
         Characters newChar = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
         characterService.registerCharacter(newChar);
 
-        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(wParty);
 
         //when
@@ -234,7 +240,7 @@ public class PartyServiceTest {
         Characters otherChar = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
         characterService.registerCharacter(otherChar);
 
-        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(wParty);
 
         //when
@@ -264,7 +270,7 @@ public class PartyServiceTest {
         Characters otherChar = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
         characterService.registerCharacter(otherChar);
 
-        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(wParty);
 
         //when
@@ -298,7 +304,7 @@ public class PartyServiceTest {
         Characters otherChar = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, newMember);
         characterService.registerCharacter(otherChar);
 
-        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, Instant.now());
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, member, character, LocalDate.now());
         partyService.registerParty(wParty);
 
         //when
@@ -345,7 +351,7 @@ public class PartyServiceTest {
         characterService.registerCharacter(charC);
 
 
-        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now());
+        Party wParty = WorldBoss.createWorldBossParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now());
         partyService.registerParty(wParty);
 
         //when
@@ -390,7 +396,7 @@ public class PartyServiceTest {
         characterService.registerCharacter(charB);
 
         //when
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), ASSIST, 1, 1.8);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now(), ASSIST, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
         partyService.joinCharacterOnPartyWithType(hlParty.getId(), charA.getId(), RIDER);
@@ -422,7 +428,7 @@ public class PartyServiceTest {
         characterService.registerCharacter(charB);
 
         //when
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), ASSIST, 1, 1.8);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now(), ASSIST, 1, 1.8);
         partyService.registerAssistParty(hlParty);
         Long pp1 = partyService.joinCharacterOnPartyWithType(hlParty.getId(), charA.getId(), RIDER);
         Long pp2 = partyService.joinCharacterOnPartyWithType(hlParty.getId(), charB.getId(), RIDER);
@@ -450,7 +456,7 @@ public class PartyServiceTest {
 
         Characters charB = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
         characterService.registerCharacter(charB);
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now(), NORMAL, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
         //when
@@ -478,7 +484,7 @@ public class PartyServiceTest {
 
         Characters charB = Characters.create(SHUSIA, "톡찍", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, memberA);
         characterService.registerCharacter(charB);
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now(), NORMAL, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
         //when
@@ -505,7 +511,7 @@ public class PartyServiceTest {
         Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.2, memberA);
         characterService.registerCharacter(charA);
 
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now(), NORMAL, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
         //when
@@ -543,7 +549,7 @@ public class PartyServiceTest {
         Characters charC = Characters.create(SHUSIA, "톡쳐", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.81, memberC);
         characterService.registerCharacter(charC);
 
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), NORMAL, 1, 1.8);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now(), NORMAL, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
         //when
@@ -573,7 +579,7 @@ public class PartyServiceTest {
         Characters charA = Characters.create(SHUSIA, "바우", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.2, memberA);
         characterService.registerCharacter(charA);
 
-        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, Instant.now(), ASSIST, 1, 1.8);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, LocalDate.now(), ASSIST, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
         //when
@@ -585,5 +591,72 @@ public class PartyServiceTest {
         Assert.assertEquals(1, partyService.findPartyParticipantWithType(hlParty.getId(), RIDER).size());
     }
 
+    @Test
+    public void 현재시간_이후_파티전체검색() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
 
+        //when
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        LocalDate d = format.parse("30-10-2022 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        d = format.parse("30-10-2020 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerParty(nlParty);
+
+        d = format.parse("30-10-2021 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Party dungeon = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerParty(dungeon);
+
+        //then
+        List<Party> partyAfterNow = partyService.findPartyAfterNow();
+        Assert.assertEquals(2, partyAfterNow.size()); // + 1 from initDB
+
+    }
+
+    @Test
+    public void 특정_날짜_파티검색() throws Exception {
+        //given
+        Member holderMember = Member.create("유니츠", "93jpark@gmail.com", "123", SHUSIA);
+        memberService.registerMember(holderMember);
+        Characters holderChar = Characters.create(SHUSIA, "유니츠", MainClass.FEMALE_GHOST_KNIGHT, SubClass.SWORD_MASTER, 1.8, holderMember);
+        characterService.registerCharacter(holderChar);
+
+        //when
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        LocalDate d = LocalDate.parse("01-01-2022 11:00:00", format);
+        Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerAssistParty(hlParty);
+
+        d = LocalDate.parse("01-01-2022 11:30:00", format);
+        Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerParty(nlParty);
+
+        d = LocalDate.parse("01-01-2022 18:00:00", format);
+        Party dungeon = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerParty(dungeon);
+
+        d = LocalDate.parse("01-01-2023 18:00:00", format);
+        Party dummy1 = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerParty(dummy1);
+
+        d = LocalDate.parse("01-01-2023 18:00:00", format);
+        Party dummy2 = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
+        partyService.registerParty(dummy2);
+
+        //then
+        LocalDate date = LocalDate.parse("01-01-2022 00:00:00", format);
+
+        List<Party> partyByDate = partyService.findPartyByDate(date);
+        List<Party> afterParties = partyService.findPartyAfterDate(date);
+        Assert.assertEquals(3, partyByDate.size());
+        Assert.assertEquals(6, afterParties.size()); // + 1 from initDb
+
+
+    }
 }
