@@ -5,11 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ouraid.ouraidback.domain.enums.ParticipantStatus;
 import ouraid.ouraidback.domain.enums.ParticipantType;
-import ouraid.ouraidback.domain.enums.PartyStatus;
 import ouraid.ouraidback.domain.party.*;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
 
 @Repository
@@ -37,7 +38,7 @@ public class PartyRepository {
     // 파티 단일 검색
     public Party findOneParty(Long id) { return em.find(Party.class, id); }
 
-    // 파티원 단일 검색
+    // 참가자 단일 검색
     public PartyParticipant findOneParticipant(Long id) { return em.find(PartyParticipant.class, id); }
 
 
@@ -77,7 +78,7 @@ public class PartyRepository {
                 .getResultList();
     }
 
-    // find PartyParticipant by Party/Character id
+    // 특정 파티의 특정 캐릭터 참가자 조회
     public List<PartyParticipant> findPartyParticipant(Long pId, Long cId) {
         return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.joinedPartyCharacter.id = :cId", PartyParticipant.class)
                 .setParameter("pId", pId)
@@ -85,7 +86,7 @@ public class PartyRepository {
                 .getResultList();
     }
 
-    // find PartyParticipant by Party/Member id
+    // 특정 파티의 특정 멤버 참가자 조회
     public List<PartyParticipant> findPartyParticipantByMember(Long pId, Long mId) {
         return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.joinedPartyCharacter.characterOwner.id = :mId", PartyParticipant.class)
                 .setParameter("pId", pId)
@@ -93,14 +94,14 @@ public class PartyRepository {
                 .getResultList();
     }
 
-    // find all participant of specific party
+    // 특정 파티의 모든 참가자 조회
     public List<PartyParticipant> findAllParticipant(Long pId) {
         return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId", PartyParticipant.class)
                 .setParameter("pId", pId)
                 .getResultList();
     }
 
-    // find all party participant based on status
+    // 특정 파티의 특정 참가자 상태에 따른 참가자 조회
     public List<PartyParticipant> findPartyParticipantWithStatus(Long pId, ParticipantStatus status) {
         return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.participantStatus = :status", PartyParticipant.class)
                 .setParameter("pId", pId)
@@ -108,6 +109,7 @@ public class PartyRepository {
                 .getResultList();
     }
 
+    // 특정 파티의 특정 참가자 타입에 따른 참가자 조회
     public List<PartyParticipant> findPartyParticipantWithType(Long pId, ParticipantType type) {
         return em.createQuery("select pp from PartyParticipant pp where pp.joinedParty.id = :pId and pp.participantType = :type", PartyParticipant.class)
                 .setParameter("pId", pId)
@@ -126,12 +128,30 @@ public class PartyRepository {
     }
 
 
+    public List<Party> findPartyByDate(LocalDate date) throws ParseException {
+
+        LocalDate begin = LocalDate.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth()).atTime(0,0,0).toLocalDate();
+        LocalDate end = LocalDate.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth()).atTime(23,59,59).toLocalDate();
+
+        return em.createQuery("select p from Party p where p.reservedTime <= :begin and p.reservedTime >= :end", Party.class)
+                .setParameter("begin", begin)
+                .setParameter("end", end)
+                .getResultList();
+    }
 
 
-    //SELECT * FROM movie.ticket t where valid_time <= SYSDATE();
+    public List<Party> findPartyAfterDate(LocalDate date) {
+        return em.createQuery("select p from Party p where p.reservedTime >= :date", Party.class)
+                .setParameter("date",date)
+                .getResultList();
+    }
 
-//    public List<Party> findAllByDate(LocalDateTime time) {
-//        return em.createQuery("select p from Party p where  ", Party.class)
-//                .getResultList();
-//    }
+    public List<Party> findPartyAfterNow() {
+        LocalDate now = LocalDate.now();
+        return em.createQuery("select p from Party p where p.reservedTime >= :now", Party.class)
+                .setParameter("now", now)
+                .getResultList();
+    }
+
+
 }
