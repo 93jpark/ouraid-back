@@ -5,15 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.Characters;
-import ouraid.ouraidback.domain.GuildMember;
 import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.*;
 import ouraid.ouraidback.domain.party.Party;
 import ouraid.ouraidback.domain.party.PartyParticipant;
 import ouraid.ouraidback.repository.PartyRepository;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static ouraid.ouraidback.domain.enums.ParticipantStatus.ACCEPTED;
@@ -268,7 +267,7 @@ public class PartyService {
     }
 
     // 파티 예정 시간 수정
-    public void updatePartyReservedTime(Long pId, Instant time) {
+    public void updatePartyReservedTime(Long pId, LocalDate time) {
         Party findParty = partyRepository.findOneParty(pId);
         findParty.updateReservedTime(time);
     }
@@ -288,11 +287,21 @@ public class PartyService {
         return partyRepository.findAllByCommunity(cName);
     }
 
-    // 날짜별 파티 검색
-    public List<Party> findPartyByDate(LocalDateTime time) {
-        //return partyRepository.findAllByDate(time);
-        return null;
+    // 특정 날짜 파티 조회
+    public List<Party> findPartyByDate(LocalDate time) throws ParseException {
+        return partyRepository.findPartyByDate(time);
     }
+
+    // 특정 날짜 이후 파티 조회
+    public List<Party> findPartyAfterDate(LocalDate time) {
+        return partyRepository.findPartyAfterDate(time);
+    }
+
+    // 현재 시간 이후 파티 조회
+    public List<Party> findPartyAfterNow() {
+        return partyRepository.findPartyAfterNow();
+    }
+
 
     // find PartyParticipant by Party/Character id
     public List<PartyParticipant> findPartyParticipant(Long pId, Long cId) {
