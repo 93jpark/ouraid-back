@@ -78,7 +78,7 @@ public class MemberServiceTest {
 
         //when
         newMember.changeMemberStatus();
-        Member findMember = memberRepository.findOne(memberId);
+        Member findMember = memberRepository.findMember(memberId);
 
         //then
         assertEquals(findMember.getAvailability(), false);
