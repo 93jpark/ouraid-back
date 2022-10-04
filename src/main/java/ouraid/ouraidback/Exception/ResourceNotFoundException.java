@@ -1,4 +1,4 @@
-package ouraid.ouraidback.domain.Exception;
+package ouraid.ouraidback.Exception;
 
 import lombok.Getter;
 import org.springframework.web.bind.annotation.ResponseStatus;
