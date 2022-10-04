@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import ouraid.ouraidback.Exception.DuplicateMemberException;
 import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.Server;
@@ -43,7 +44,7 @@ public class MemberServiceTest {
         assertEquals(savedMemberId, findMember.getId());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = DuplicateMemberException.class)
     public void 중복_회원_예외() {
         //given
         Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
