@@ -1,2 +1,4 @@
-package ouraid.ouraidback.dto.guild.responseDto;public class CreateGuildResponse {
+package ouraid.ouraidback.dto.guild.responseDto;
+
+public class CreateGuildResponse {
 }

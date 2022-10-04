@@ -1,2 +1,5 @@
-package ouraid.ouraidback.dto.characters;public class DeleteCharacterRequest {
+package ouraid.ouraidback.dto.characters.requestDto;
+
+public class DeleteCharacterRequest {
+
 }

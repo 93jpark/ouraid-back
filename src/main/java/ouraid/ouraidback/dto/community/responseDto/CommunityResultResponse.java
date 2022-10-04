@@ -1,2 +1,4 @@
-package ouraid.ouraidback.dto.community.responseDto;public class CommunityResultResponse {
+package ouraid.ouraidback.dto.community.responseDto;
+
+public class CommunityResultResponse {
 }

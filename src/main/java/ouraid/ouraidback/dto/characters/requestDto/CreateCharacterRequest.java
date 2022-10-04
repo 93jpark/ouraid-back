@@ -1,2 +1,4 @@
-package ouraid.ouraidback.dto.characters;public class CreateCharacterRequest {
+package ouraid.ouraidback.dto.characters.requestDto;
+
+public class CreateCharacterRequest {
 }

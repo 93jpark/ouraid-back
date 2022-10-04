@@ -1,2 +1,4 @@
-package ouraid.ouraidback.dto.guild.requestDto;public class CreateGuildRequest {
+package ouraid.ouraidback.dto.guild.requestDto;
+
+public class CreateGuildRequest {
 }

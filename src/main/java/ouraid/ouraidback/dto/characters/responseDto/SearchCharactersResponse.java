@@ -1,2 +1,4 @@
-package ouraid.ouraidback.dto.characters.responseDto;public class SearchCharactersResponse {
+package ouraid.ouraidback.dto.characters.responseDto;
+
+public class SearchCharactersResponse {
 }
