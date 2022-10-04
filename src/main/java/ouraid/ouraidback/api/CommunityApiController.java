@@ -1,2 +1,4 @@
-package ouraid.ouraidback.api;public class CommunityApiController {
+package ouraid.ouraidback.api;
+
+public class CommunityApiController {
 }

@@ -1,2 +1,4 @@
-package ouraid.ouraidback.api;public class GuildApiController {
+package ouraid.ouraidback.api;
+
+public class GuildApiController {
 }

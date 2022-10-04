@@ -1,2 +1,4 @@
-package ouraid.ouraidback.api;public class CharactersApiController {
+package ouraid.ouraidback.api;
+
+public class CharactersApiController {
 }

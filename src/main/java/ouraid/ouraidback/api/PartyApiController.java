@@ -1,2 +1,4 @@
-package ouraid.ouraidback.api;public class PartyApiController {
+package ouraid.ouraidback.api;
+
+public class PartyApiController {
 }
