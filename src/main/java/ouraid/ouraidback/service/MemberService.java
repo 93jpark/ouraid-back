@@ -110,19 +110,20 @@ public class MemberService {
     @Transactional(readOnly = true) // 길드 기반
     public List<Member> findMembersByGuild(String gName) { return memberRepository.findByGuild(gName); }
 
-    // 중복회원 검증
+    // 중복 닉네임 회원 검증
     public void validateDuplicatedMemberNickname(String newMemberName) {
         List<Member> findMember =  memberRepository.findByNickname(newMemberName);
         if(!findMember.isEmpty()){
-            throw new DuplicateMemberException(newMemberName);
+            throw new DuplicateMemberException("nickname:"+newMemberName);
         }
         log.info("MemberService.validateDuplicateMemberNickname() : 사용가능한 닉네임");
     }
 
+    // 중복 이메일 회원 검증
     public void validateDuplicatedMemberEmail(String newMemberEmail) {
         List<Member> findMember =  memberRepository.findbyEmail(newMemberEmail);
         if(!findMember.isEmpty()){
-            throw new DuplicateMemberException(newMemberEmail);
+            throw new DuplicateMemberException("email:"+newMemberEmail);
         }
         log.info("MemberService.validateDuplicateMemberEmail() : 사용가능한 이메일");
     }
