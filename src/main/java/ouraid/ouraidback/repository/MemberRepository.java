@@ -56,4 +56,9 @@ public class MemberRepository {
                 .getResultList();
     }
 
+    public List<Member> findbyEmail(String newMemberEmail) {
+        return em.createQuery("select m from Member m where m.email = :newMemberEmail", Member.class)
+                .setParameter("newMemberEmail", newMemberEmail)
+                .getResultList();
+    }
 }
