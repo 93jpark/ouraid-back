@@ -81,6 +81,12 @@ public class Member {
         this.nickname = newNickname;
     }
 
+    // 멤버 이메일 변경
+    public void updateMemberEmail(String email) { this.email = email; }
+
+    // 멤버 비밀번호 변경
+    public void updateMemberPassword(String newPswd) { this.password = newPswd; }
+
     //소유 캐릭터 추가
     public void addOwnCharacter(Characters character) {
         this.ownCharacters.add(character);
