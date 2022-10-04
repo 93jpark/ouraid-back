@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ouraid.ouraidback.Exception.DuplicateMemberException;
 import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Guild;
 import ouraid.ouraidback.domain.GuildMember;
@@ -29,7 +30,8 @@ public class MemberService {
     // 회원가입
     @Transactional
     public Long registerMember(Member member) {
-        validateDuplicatedMember(member.getNickname());
+        validateDuplicatedMemberNickname(member.getNickname());
+        validateDuplicatedMemberEmail(member.getEmail());
         Long memberId = memberRepository.register(member);
         log.info(member.getNickname()+" has been registered");
         return memberId;
@@ -50,11 +52,11 @@ public class MemberService {
     @Transactional
     public void updateMemberNickname(Long memberId, String newName) {
         try {
-            validateDuplicatedMember(newName);
+            validateDuplicatedMemberNickname(newName);
             Member member = memberRepository.findMember(memberId);
             member.updateMemberNickname(newName);
-        } catch (Exception e) {
-            log.info(e.getMessage());
+        } catch (DuplicateMemberException e) {
+            throw e;
         }
     }
 
@@ -62,8 +64,20 @@ public class MemberService {
     public void changeMemberPassword(Long memberId, String newPassword) {
         try {
             Member findMember = memberRepository.findMember(memberId);
+            findMember.updateMemberPassword(newPassword);
         } catch (Exception e) {
             log.info(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void changeMemberEmail(Long memberId, String newEmail) {
+        try {
+            Member findMember = memberRepository.findMember(memberId);
+            validateDuplicatedMemberEmail(newEmail);
+            findMember.updateMemberEmail(newEmail);
+        } catch (DuplicateMemberException e) {
+            throw e;
         }
     }
 
@@ -97,11 +111,20 @@ public class MemberService {
     public List<Member> findMembersByGuild(String gName) { return memberRepository.findByGuild(gName); }
 
     // 중복회원 검증
-    public void validateDuplicatedMember(String newMemberName) {
+    public void validateDuplicatedMemberNickname(String newMemberName) {
         List<Member> findMember =  memberRepository.findByNickname(newMemberName);
         if(!findMember.isEmpty()){
-            throw new IllegalStateException("MemberService.validateDuplicateMember() : 이미 존재하는 회원");
+            throw new DuplicateMemberException(newMemberName);
         }
-        log.info("MemberService.validateDuplicateMember() : 사용가능한 회원정보");
+        log.info("MemberService.validateDuplicateMemberNickname() : 사용가능한 닉네임");
     }
+
+    public void validateDuplicatedMemberEmail(String newMemberEmail) {
+        List<Member> findMember =  memberRepository.findbyEmail(newMemberEmail);
+        if(!findMember.isEmpty()){
+            throw new DuplicateMemberException(newMemberEmail);
+        }
+        log.info("MemberService.validateDuplicateMemberEmail() : 사용가능한 이메일");
+    }
+
 }
