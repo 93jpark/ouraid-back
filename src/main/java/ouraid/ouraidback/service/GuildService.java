@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.*;
-import ouraid.ouraidback.domain.Exception.ResourceNotFoundException;
+import ouraid.ouraidback.Exception.ResourceNotFoundException;
 import ouraid.ouraidback.repository.CharacterRepository;
 import ouraid.ouraidback.repository.GuildRepository;
 import ouraid.ouraidback.repository.MemberRepository;
@@ -13,7 +13,6 @@ import ouraid.ouraidback.repository.MemberRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

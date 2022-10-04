@@ -10,11 +10,17 @@ import ouraid.ouraidback.domain.Community;
 import ouraid.ouraidback.domain.Guild;
 import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.MainClass;
+import ouraid.ouraidback.domain.enums.RecruitType;
 import ouraid.ouraidback.domain.enums.Server;
 import ouraid.ouraidback.domain.enums.SubClass;
+import ouraid.ouraidback.domain.party.HardLotus;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -117,6 +123,10 @@ public class InitDb {
             em.persist(gC);
 
             em.persist(comA);
+
+            HardLotus hlp = HardLotus.createHardLotusParty(RecruitType.OPEN, Server.SHUSIA, mA, ca1, LocalDate.now());
+            em.persist(hlp);
+
 
         }
 

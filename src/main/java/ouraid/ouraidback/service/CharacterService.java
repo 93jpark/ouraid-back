@@ -2,10 +2,9 @@ package ouraid.ouraidback.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ouraid.ouraidback.domain.Exception.ResourceNotFoundException;
+import ouraid.ouraidback.Exception.ResourceNotFoundException;
 import ouraid.ouraidback.repository.CharacterRepository;
 import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Characters;
