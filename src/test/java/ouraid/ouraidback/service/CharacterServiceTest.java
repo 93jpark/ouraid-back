@@ -139,7 +139,7 @@ public class CharacterServiceTest {
         member.addOwnCharacters(charA, charB, charC);
 
         //when
-        List<Characters> charList = characterService.findCharactersByMemberWithGuild(guild.getName(), member.getNickname());
+        List<Characters> charList = characterService.findCharactersByMemberNameWithGuildName(guild.getName(), member.getNickname());
 
         //then
         assertEquals(3,charList.size());

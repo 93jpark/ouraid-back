@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import ouraid.ouraidback.Exception.DuplicateMemberException;
+import ouraid.ouraidback.Exception.DuplicateResourceException;
 import ouraid.ouraidback.repository.MemberRepository;
 import ouraid.ouraidback.domain.Member;
 import ouraid.ouraidback.domain.enums.Server;
@@ -34,21 +34,21 @@ public class MemberServiceTest {
     @Test
     public void 단일_멤버_생성() throws Exception {
         //given
-        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        Member newMember = Member.create("유니츠1", "9321jpark@gmail.com", "123", Server.SHUSIA);
         Long savedMemberId = memberService.registerMember(newMember);
 
         //when
-        Member findMember = memberRepository.findByNickname("유니츠").get(0);
+        Member findMember = memberRepository.findByNickname("유니츠1").get(0);
 
         //then
         assertEquals(savedMemberId, findMember.getId());
     }
 
-    @Test(expected = DuplicateMemberException.class)
+    @Test(expected = DuplicateResourceException.class)
     public void 중복_회원_예외() {
         //given
-        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
-        Member dupMember = Member.create("유니츠", "mock@gmail.com", "123", Server.SHUSIA);
+        Member newMember = Member.create("유니츠테스트", "mock1@gmail.com", "123", Server.SHUSIA);
+        Member dupMember = Member.create("유니츠테스트", "mock@gmail.com", "123", Server.SHUSIA);
 
         //when
         memberService.registerMember(newMember);
@@ -62,7 +62,7 @@ public class MemberServiceTest {
     @Test
     public void 멤버_정보_수정() throws Exception {
         //given
-        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        Member newMember = Member.create("유니츠1", "9321jpark@gmail.com", "123", Server.SHUSIA);
         Long memberId = memberService.registerMember(newMember);
         //when
         memberService.updateMemberNickname(memberId, "유우니이츠으");
@@ -74,7 +74,7 @@ public class MemberServiceTest {
     @Test
     public void 멤버_비활성화() {
         //given
-        Member newMember = Member.create("유니츠", "93jpark@gmail.com", "123", Server.SHUSIA);
+        Member newMember = Member.create("유니츠1", "9321jpark@gmail.com", "123", Server.SHUSIA);
         Long memberId = memberService.registerMember(newMember);
 
         //when

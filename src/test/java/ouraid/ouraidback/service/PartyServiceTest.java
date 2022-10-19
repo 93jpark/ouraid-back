@@ -600,16 +600,16 @@ public class PartyServiceTest {
         characterService.registerCharacter(holderChar);
 
         //when
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        LocalDate d = format.parse("30-10-2022 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        LocalDate d = format.parse("2022-10-30 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
-        d = format.parse("30-10-2020 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        d = format.parse("2020-10-30 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerParty(nlParty);
 
-        d = format.parse("30-10-2021 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        d = format.parse("2021-10-30 11:00:00").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         Party dungeon = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerParty(dungeon);
 
@@ -628,29 +628,29 @@ public class PartyServiceTest {
         characterService.registerCharacter(holderChar);
 
         //when
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        LocalDate d = LocalDate.parse("01-01-2022 11:00:00", format);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDate d = LocalDate.parse("2022-01-01 11:00:00", format);
         Party hlParty = HardLotus.createHardLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerAssistParty(hlParty);
 
-        d = LocalDate.parse("01-01-2022 11:30:00", format);
+        d = LocalDate.parse("2022-01-01 11:30:00", format);
         Party nlParty = NormalLotus.createNormalLotusParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerParty(nlParty);
 
-        d = LocalDate.parse("01-01-2022 18:00:00", format);
+        d = LocalDate.parse("2022-01-01 18:00:00", format);
         Party dungeon = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerParty(dungeon);
 
-        d = LocalDate.parse("01-01-2023 18:00:00", format);
+        d = LocalDate.parse("2023-01-01 18:00:00", format);
         Party dummy1 = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerParty(dummy1);
 
-        d = LocalDate.parse("01-01-2023 18:00:00", format);
+        d = LocalDate.parse("2023-01-01 18:00:00", format);
         Party dummy2 = Dungeon.createDungeonParty(OPEN, SHUSIA, holderMember, holderChar, d, ASSIST, 1, 1.8);
         partyService.registerParty(dummy2);
 
         //then
-        LocalDate date = LocalDate.parse("01-01-2022 00:00:00", format);
+        LocalDate date = LocalDate.parse("2022-01-01 00:00:00", format);
 
         List<Party> partyByDate = partyService.findPartyByDate(date);
         List<Party> afterParties = partyService.findPartyAfterDate(date);
