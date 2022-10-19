@@ -1,9 +1,7 @@
 package ouraid.ouraidback.domain;
 
 import com.sun.istack.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ouraid.ouraidback.domain.enums.MainClass;
 import ouraid.ouraidback.domain.enums.Server;
 import ouraid.ouraidback.domain.enums.SubClass;
@@ -28,7 +26,7 @@ public class Characters {
 
     @Enumerated(EnumType.STRING) @NotNull private SubClass subClass;
 
-    @NotNull private BigDecimal ability;
+    @NonNull private BigDecimal ability;
 
     private Integer expHardLotus;
     private Integer expDungeon;
@@ -62,6 +60,7 @@ public class Characters {
         character.expDungeon = 0;
         character.expHardLotus = 0;
         character.expNormalLotus = 0;
+        character.expWorldBoss = 0;
 
         return character;
     }
