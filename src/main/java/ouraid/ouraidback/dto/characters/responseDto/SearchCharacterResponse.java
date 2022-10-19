@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 @AllArgsConstructor
-public class SearchCharactersResponse {
+public class SearchCharacterResponse {
     private Long id;
     private String name;
     private Server server;
@@ -21,13 +21,16 @@ public class SearchCharactersResponse {
     private SubClass subClass;
     private BigDecimal ability;
 
-
     private Integer expHardLotus;
     private Integer expDungeon;
     private Integer expNormalLotus;
     private Integer expWorldBoss;
 
-    public SearchCharactersResponse(Characters character) {
+    private String joinedGuildName;
+    private String joinedCommunityName;
+    private String ownMemberName;
+
+    public SearchCharacterResponse(Characters character) {
         this.id = character.getId();
         this.name = character.getName();
         this.server = character.getServer();
@@ -39,5 +42,23 @@ public class SearchCharactersResponse {
         this.expDungeon = character.getExpDungeon();
         this.expNormalLotus = character.getExpNormalLotus();
         this.expWorldBoss = character.getExpWorldBoss();
+    }
+
+    public static SearchCharacterResponse toDto(Characters findChar) {
+        return SearchCharacterResponse.builder()
+                .id(findChar.getId())
+                .name(findChar.getName())
+                .server(findChar.getServer())
+                .mainClass(findChar.getMainClass())
+                .subClass(findChar.getSubClass())
+                .ability(findChar.getAbility())
+                .expDungeon(findChar.getExpDungeon())
+                .expNormalLotus(findChar.getExpNormalLotus())
+                .expHardLotus(findChar.getExpHardLotus())
+                .expWorldBoss(findChar.getExpWorldBoss())
+                .ownMemberName(findChar.getCharacterOwner().getNickname())
+                .joinedGuildName(findChar.getJoinedGuild().getName())
+                .joinedCommunityName(findChar.getJoinedCommunity().getName())
+                .build();
     }
 }
