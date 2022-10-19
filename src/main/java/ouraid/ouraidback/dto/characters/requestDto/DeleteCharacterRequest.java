@@ -1,5 +1,10 @@
 package ouraid.ouraidback.dto.characters.requestDto;
 
-public class DeleteCharacterRequest {
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+public class DeleteCharacterRequest {
+    private Long id;
+    private String charName;
 }
