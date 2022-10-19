@@ -80,6 +80,10 @@ public class CharacterService {
     @Transactional(readOnly = true)
     public Characters findOne(Long charId) { return characterRepository.findOne(charId); }
 
+    // 캐릭터 명 기반 단일 조회
+    @Transactional(readOnly = true)
+    public Characters findCharByName(String charName) { return characterRepository.findByCharName(charName).get(0); }
+
     // 등록된 캐릭터 모두 조회
     @Transactional(readOnly = true)
     public List<Characters> findAll() { return characterRepository.findAll(); }
@@ -91,13 +95,23 @@ public class CharacterService {
     }
 
     // 특정 길드의 캐릭터 모두 조회
-    public List<Characters> findCharactersByGuild(String gName) {
-        return characterRepository.findByGuild(gName);
+    public List<Characters> findCharactersByGuildName(String gName) {
+        return characterRepository.findByGuildName(gName);
     }
 
     // 특정 길드의 멤버가 지닌 캐릭터 조회
-    public List<Characters> findCharactersByMemberWithGuild(String gName, String mName) {
-        return characterRepository.findCharactersByMemberWithGuild(gName, mName);
+    public List<Characters> findCharactersByMemberNameWithGuildName(String gName, String mName) {
+        return characterRepository.findCharactersByMemberNameWithGuildName(gName, mName);
+    }
+
+    // 특정 멤버 닉네임 기반 소유 캐릭터 조회
+    public List<Characters> findCharactersByOwnerNickname(String mName) {
+        return characterRepository.findOwnCharactersByMemberName(mName);
+    }
+
+    // 특정 커뮤니티 기반 캐릭터 조회
+    public List<Characters> findCharactersByCommunityName(String cName) {
+        return characterRepository.findByCommunity(cName);
     }
 
     /* 캐릭명 중복 검사 */

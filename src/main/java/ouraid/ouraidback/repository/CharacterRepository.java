@@ -51,15 +51,15 @@ public class CharacterRepository {
     }
 
     // 소속 길드 기반 캐릭터 조회
-    public List<Characters> findByGuild(String guildName) {
-        return em.createQuery("select c from Characters c where c.joinedGuild = :guildName", Characters.class)
+    public List<Characters> findByGuildName(String guildName) {
+        return em.createQuery("select c from Characters c where c.joinedGuild.name = :guildName", Characters.class)
                 .setParameter("guildName", guildName)
                 .getResultList();
     }
 
     // 소속 연합 기반 캐릭터 조회
     public List<Characters> findByCommunity(String cName) {
-        return em.createQuery("select c from Characters c where c.joinedCommunity = :cName", Characters.class)
+        return em.createQuery("select c from Characters c where c.joinedCommunity.name = :cName", Characters.class)
                 .setParameter("cName", cName)
                 .getResultList();
     }
@@ -86,7 +86,7 @@ public class CharacterRepository {
     }
 
     // 특정 길드의 멤버가 지닌 캐릭터 조회
-    public List<Characters> findCharactersByMemberWithGuild(String guildName, String memberName) {
+    public List<Characters> findCharactersByMemberNameWithGuildName(String guildName, String memberName) {
         return em.createQuery("select c from Characters c " +
                         "where c.characterOwner.nickname = :memberName " +
                         "and c.joinedGuild.name = :guildName", Characters.class)
@@ -96,7 +96,7 @@ public class CharacterRepository {
     }
 
     // 특정 멤버의 모든 캐릭터 조회
-    public List<Characters> findOwnCharactersByMember(String memberName) {
+    public List<Characters> findOwnCharactersByMemberName(String memberName) {
         return em.createQuery("select c from Characters c " +
                         "where c.characterOwner.nickname = :memberName ", Characters.class)
                 .setParameter("memberName", memberName)

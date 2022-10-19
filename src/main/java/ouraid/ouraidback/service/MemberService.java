@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ouraid.ouraidback.Exception.DuplicateMemberException;
+import ouraid.ouraidback.Exception.DuplicateResourceException;
 import ouraid.ouraidback.domain.Characters;
 import ouraid.ouraidback.domain.Guild;
 import ouraid.ouraidback.domain.GuildMember;
@@ -55,7 +55,7 @@ public class MemberService {
             validateDuplicatedMemberNickname(newName);
             Member member = memberRepository.findMember(memberId);
             member.updateMemberNickname(newName);
-        } catch (DuplicateMemberException e) {
+        } catch (DuplicateResourceException e) {
             throw e;
         }
     }
@@ -76,7 +76,7 @@ public class MemberService {
             Member findMember = memberRepository.findMember(memberId);
             validateDuplicatedMemberEmail(newEmail);
             findMember.updateMemberEmail(newEmail);
-        } catch (DuplicateMemberException e) {
+        } catch (DuplicateResourceException e) {
             throw e;
         }
     }
@@ -84,7 +84,7 @@ public class MemberService {
     // Member의 모든 캐릭터 삭제
     @Transactional
     public void removeMemberOwnCharacters(Member member) {
-        List<Characters> charList = characterRepository.findOwnCharactersByMember(member.getNickname());
+        List<Characters> charList = characterRepository.findOwnCharactersByMemberName(member.getNickname());
         for (Characters c : charList) {
             log.info("{} is removed", c.getName());
             characterService.removeCharacter(c.getId());
@@ -114,7 +114,7 @@ public class MemberService {
     public void validateDuplicatedMemberNickname(String newMemberName) {
         List<Member> findMember =  memberRepository.findByNickname(newMemberName);
         if(!findMember.isEmpty()){
-            throw new DuplicateMemberException("nickname:"+newMemberName);
+            throw new DuplicateResourceException("nickname:"+newMemberName);
         }
         log.info("MemberService.validateDuplicateMemberNickname() : 사용가능한 닉네임");
     }
@@ -123,7 +123,7 @@ public class MemberService {
     public void validateDuplicatedMemberEmail(String newMemberEmail) {
         List<Member> findMember =  memberRepository.findbyEmail(newMemberEmail);
         if(!findMember.isEmpty()){
-            throw new DuplicateMemberException("email:"+newMemberEmail);
+            throw new DuplicateResourceException("email:"+newMemberEmail);
         }
         log.info("MemberService.validateDuplicateMemberEmail() : 사용가능한 이메일");
     }

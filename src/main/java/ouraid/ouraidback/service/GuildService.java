@@ -116,7 +116,7 @@ public class GuildService {
         GuildMember gm = guildRepository.findByGuildMember(findGuild.getName(), owner.getNickname()).get(0);
 
         // 해당 캐릭터가 탈퇴하면 소속 캐릭터의 수가 0인경우, 길드 멤버리스트에서 해당 멤버를 제거
-        if(characterRepository.findCharactersByMemberWithGuild(findGuild.getName(), owner.getNickname()).size() <= 1) {
+        if(characterRepository.findCharactersByMemberNameWithGuildName(findGuild.getName(), owner.getNickname()).size() <= 1) {
             owner.leaveJoinedGuild(gm);
             em.remove(gm);
         }
@@ -157,7 +157,7 @@ public class GuildService {
         GuildMember gm = guildRepository.findGuildMember(guildId, memberId).get(0);
 
         if (guild!=null) {
-            List<Characters> charList = characterService.findCharactersByMemberWithGuild(guild.getName(), member.getNickname());
+            List<Characters> charList = characterService.findCharactersByMemberNameWithGuildName(guild.getName(), member.getNickname());
             log.info("'{}' guild's {} characters found who owned by {}", guild.getName(), charList.size(), member.getNickname());
             // 멤버의 캐릭터들 모두 길드 탈퇴
             for(Characters c : charList) {
@@ -201,13 +201,16 @@ public class GuildService {
         return guildRepository.findByJoinedCommunityName(comName);
     }
 
-    // 길드와 멤버 id 기반 GuildMember 검색
+    // 길드와 멤버id 기반 GuildMember 검색
     @Transactional(readOnly = true)
     public List<GuildMember> findGuildMemberByGuildMember(Long gId, Long mId) {
-        return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId", GuildMember.class)
-                .setParameter("gId", gId)
-                .setParameter("mId", mId)
-                .getResultList();
+        return guildRepository.findGuildMemberByGuildMember(gId, mId);
+    }
+
+    // 길드 소유 멤버의 id기반 길드 조회
+    @Transactional(readOnly = true)
+    public List<Guild> findGuildbyOwner(Long mId) {
+        return guildRepository.findGuildbyOwner(mId);
     }
 
     // 길드 이름 중복 조회

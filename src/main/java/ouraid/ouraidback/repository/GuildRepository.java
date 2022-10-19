@@ -2,6 +2,7 @@ package ouraid.ouraidback.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ouraid.ouraidback.domain.Guild;
 import ouraid.ouraidback.domain.GuildMember;
 import ouraid.ouraidback.domain.Member;
@@ -78,6 +79,23 @@ public class GuildRepository {
     public List<GuildMember> findGuildMember(Long gId, Long mId) {
         return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId", GuildMember.class)
                 .setParameter("gId", gId)
+                .setParameter("mId", mId)
+                .getResultList();
+    }
+
+    // 길드와 멤버 id 기반 GuildMember 검색
+    @Transactional(readOnly = true)
+    public List<GuildMember> findGuildMemberByGuildMember(Long gId, Long mId) {
+        return em.createQuery("select gm from GuildMember gm where gm.guild.id = :gId and gm.member.id = :mId", GuildMember.class)
+                .setParameter("gId", gId)
+                .setParameter("mId", mId)
+                .getResultList();
+    }
+
+    // 길드 소유 멤버의 id기반 길드 조회
+    @Transactional(readOnly = true)
+    public List<Guild> findGuildbyOwner(Long mId) {
+        return em.createQuery("select g from Guild g where g.guildMaster.id = :mId", Guild.class)
                 .setParameter("mId", mId)
                 .getResultList();
     }
